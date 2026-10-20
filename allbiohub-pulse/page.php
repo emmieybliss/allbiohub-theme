@@ -1,7 +1,9 @@
 <?php
 /**
  * Pages (About, Contact, Privacy…). Content is rendered exactly as authored,
- * including Elementor layouts, which take the full width.
+ * including Elementor layouts, which take the full width. Pages built from
+ * a plugin's shortcode or block (the Startup Database pages) get a wide,
+ * unstyled column so the plugin's own layout is not squeezed or restyled.
  *
  * @package AllBioHub_Pulse
  */
@@ -12,11 +14,21 @@ get_header();
 
 while ( have_posts() ) :
 	the_post();
+	$pulse_app     = pulse_is_app_page();
 	$pulse_builder = class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->documents->get( get_the_ID() ) && \Elementor\Plugin::$instance->documents->get( get_the_ID() )->is_built_with_elementor();
 	?>
 	<article id="post-<?php the_ID(); ?>" <?php post_class( 'pulse-page' . ( $pulse_builder ? ' is-builder' : '' ) ); ?>>
 		<?php if ( $pulse_builder ) : ?>
 			<?php the_content(); ?>
+		<?php elseif ( $pulse_app ) : ?>
+			<div class="pulse-wrap pulse-app">
+				<header class="pulse-page__head">
+					<h1 class="pulse-page__title"><?php the_title(); ?></h1>
+				</header>
+				<div class="entry-content">
+					<?php the_content(); ?>
+				</div>
+			</div>
 		<?php else : ?>
 			<div class="pulse-wrap pulse-wrap--narrow">
 				<header class="pulse-page__head">

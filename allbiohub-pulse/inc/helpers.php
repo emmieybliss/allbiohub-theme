@@ -320,3 +320,14 @@ function pulse_social_links() {
 	}
 	return $out;
 }
+
+/**
+ * A page whose content is a plugin's app (a shortcode or block), such as the
+ * Startup Database directory, dashboard and forms.
+ */
+function pulse_is_app_page( $post = null ) {
+	$post    = get_post( $post );
+	$content = $post ? (string) $post->post_content : '';
+	$is_app  = (bool) preg_match( '/\[abh_|<!-- wp:(abh|allbiohub)/i', $content );
+	return (bool) apply_filters( 'pulse_is_app_page', $is_app, $post );
+}

@@ -59,6 +59,9 @@ function pulse_breadcrumbs() {
 		echo ' <span aria-hidden="true">/</span> <a href="' . esc_url( get_term_link( $cat ) ) . '">' . esc_html( html_entity_decode( $cat->name ) ) . '</a>';
 	} elseif ( is_singular( 'abh_video' ) ) {
 		echo ' <span aria-hidden="true">/</span> <a href="' . esc_url( get_post_type_archive_link( 'abh_video' ) ) . '">' . esc_html__( 'Video', 'allbiohub-pulse' ) . '</a>';
+	} elseif ( is_singular( array( 'abh_startup', 'abh_founder' ) ) && get_page_by_path( 'startups' ) ) {
+		$startups = get_page_by_path( 'startups' );
+		echo ' <span aria-hidden="true">/</span> <a href="' . esc_url( get_permalink( $startups ) ) . '">' . esc_html( get_the_title( $startups ) ) . '</a>';
 	}
 	echo '</nav>';
 }

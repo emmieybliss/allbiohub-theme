@@ -1334,6 +1334,8 @@ html.pulse-locked { overflow: hidden; }
 .pulse-format__icon { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--pulse-accent-soft); color: var(--pulse-accent); }
 .pulse-format__title { font-family: var(--pulse-serif); font-size: 1.5rem; line-height: 1.1; }
 .pulse-format__text { color: var(--pulse-ink-2); font-size: .9375rem; }
+.pulse-app { padding-block: 24px 64px; }
+.pulse-app .pulse-page__head { margin-bottom: 24px; }
 .pulse-advertise__actions { display: flex; flex-wrap: wrap; gap: 12px; }
 .pulse-advertise__cta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; margin-top: 32px; padding: 24px; border-radius: var(--pulse-radius-ui); background: var(--pulse-sunk); font-size: 1.0625rem; }
 

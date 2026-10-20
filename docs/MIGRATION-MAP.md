@@ -46,7 +46,7 @@ Pulse adds a **section map** on top of the existing categories. Category slugs, 
 | `post` in Biography (380) | `single-biography.php`, chosen automatically when the post is in `biography` | Profile hero image, name, Quick Profile box, TOC built from existing H2/H3 headings, styled section headings, related biographies. **Article content is not edited.** The Quick Profile is filled from an optional meta box and stays hidden when it's empty | Display only |
 | `post`, everything else (614) | `single.php` | Category, title, subtitle, author, dates, reading time, share buttons, hero image, content, TOC, related stories, newsletter, comments, ad slots | Display only |
 | `page` (29) | `page.php` | The page content is rendered unchanged inside Pulse typography. The two Elementor pages are rendered by Elementor. | Display only |
-| `abh_startup` (208), `abh_founder` (1) | **Not taken over.** The AllBioHub Startup Database plugin keeps its own templates | Pulse only provides the header, footer and fonts around them | None |
+| `abh_startup` (208), `abh_founder` (1) | **Not taken over.** The AllBioHub Startup Database plugin draws each profile itself | Pulse gives profiles a clean, wide column (`single-abh_startup.php`, `single-abh_founder.php`) with a Home / Startups breadcrumb, so no article byline, contents box, ads or related stories are added around them. Startup taxonomies the plugin doesn't template (funding stage, company type) use the Pulse archive | None |
 | `attachment` | `image.php` falls back to `single.php` | Display only | |
 | `elementor_library`, `rb-etemplate` (7), `wpcode`, `adstxt`, `app-adstxt`, Rank Math types | Not used by the theme | Left as they are | None |
 
@@ -88,7 +88,7 @@ Every post field Pulse reads, in order of preference:
 | Blog (749) | classic, empty | Stays the posts page. It gets the Pulse “Latest stories” archive layout |
 | About Us, Contact Us, Privacy Policy, Terms Of Use, Terms and Conditions, Disclaimer, DMCA Notice, Cookie Policy, Copyright Policy, Editorial Policy, Advertising & Partnership Policy, Meet Our Team, Donation, Submit a Story, Sponsored & Guest Post Publication Rate, YouTube Resources, iCodeGPT.com is For Sale, BlissBlock Privacy, SwapBliss | classic | **Content unchanged.** Pulse provides the page typography and layout only |
 | Advertise With Us (4821) | classic (371 words) | The **existing text is kept.** You can optionally assign the new “Advertise With Us” template, which shows your existing content first, followed by the ad-format cards and a contact link. It shows **no traffic numbers** |
-| Startups, Claim a Startup, List Your Startup, My Startup Account, Startup Dashboard, Startup Pricing & Plans | classic or Gutenberg (shortcode pages) | Untouched. The Startup Database plugin's shortcodes render them |
+| Startups, Claim a Startup, List Your Startup, My Startup Account, Startup Dashboard, Startup Pricing & Plans | classic or Gutenberg (shortcode pages) | Untouched. The plugin's `[abh_…]` shortcodes render them. Pulse detects these pages and shows them full width without article text styling, so the directory, forms and dashboard keep their own layout |
 
 ## 6. Menus detected
 
