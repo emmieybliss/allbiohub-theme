@@ -26,7 +26,8 @@ defined( 'ABSPATH' ) || exit;
 				foreach ( array( 'about-us', 'contact-us', 'privacy-policy', 'terms-of-use', 'advertise-with-us' ) as $slug ) {
 					$page = get_page_by_path( $slug );
 					if ( $page && 'publish' === $page->post_status ) {
-						printf( '<li><a href="%s">%s</a></li>', esc_url( get_permalink( $page ) ), esc_html( get_the_title( $page ) ) );
+						$href = 'advertise-with-us' === $slug && pulse_opt( 'advertise_url' ) ? pulse_opt( 'advertise_url' ) : get_permalink( $page );
+						printf( '<li><a href="%s">%s</a></li>', esc_url( $href ), esc_html( get_the_title( $page ) ) );
 					}
 				}
 				echo '</ul>';

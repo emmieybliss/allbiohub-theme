@@ -29,6 +29,7 @@ $pulse_modules = array(
 	'seo',
 	'performance',
 	'theme-options',
+	'brand',
 	'migration',
 );
 

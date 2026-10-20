@@ -26,6 +26,7 @@ function pulse_schema() {
 		'tagline'               => array( 'text', 'Stories that inspire.' ),
 		'footer_about'          => array( 'textarea', 'AllBioHub is an African digital publication covering the people, stories, business and culture shaping the continent and the world.' ),
 		'logo_dark'             => array( 'int', 0 ),
+		'advertise_url'         => array( 'url', 'https://mediakitad.netlify.app/' ),
 
 		// Header.
 		'header_sticky'         => array( 'bool', 1 ),

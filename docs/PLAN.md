@@ -132,7 +132,7 @@ Category URLs (`/category/biography/` and so on) stay exactly as they are, so no
 
 1. **Before activation:** take a full backup of the database and `wp-content/uploads`. Defender or the host's backup tool can do this. Also clear the LiteSpeed cache after switching themes.
 2. **Test on staging first** if your host offers it.
-3. **On activation:** Pulse only **detects** and writes `allbiohub_migration_report`. Nothing is applied.
+3. **On activation:** Pulse **detects** and writes `allbiohub_migration_report`. It also runs the two steps the owner approved (Technology/Lifestyle categories, accent from the logo), once, logged and undoable. Nothing else is applied.
 4. **Applying:** each step (menu assignment, copying ads, adding posts to new categories) is approved separately, logged in `allbiohub_migration_log` along with the data needed to undo it, and can be reversed from the Migration screen.
 5. **Rollback:** switching back to Foxiz always works, because no Foxiz data, widget or option is removed.
 
@@ -185,7 +185,7 @@ Data: settings use one autoloaded option, `allbiohub_settings`. Ads use `allbioh
 
 ### 4.1 Colour tokens
 
-The exact AllBioHub purple will be taken from the existing logo once it is available. Until then the provisional token is **`#5B2BD9`**.
+The AllBioHub purple is read from the site's logo on activation (`inc/brand.php`): the most common strong colour, darkened for 4.5:1 on white and lightened for dark mode. The fallback token is **`#5B2BD9`**.
 
 | Token | Light | Dark |
 |---|---|---|

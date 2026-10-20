@@ -53,7 +53,12 @@ while ( have_posts() ) :
 			</ul>
 			<div class="pulse-advertise__cta">
 				<p><?php esc_html_e( 'Tell us about your brand and campaign, and we will send you the options that fit.', 'allbiohub-pulse' ); ?></p>
-				<a class="pulse-btn" href="<?php echo esc_url( $pulse_contact ); ?>"><?php esc_html_e( 'Get in touch', 'allbiohub-pulse' ); ?> <?php echo pulse_icon( 'arrow', 16 ); // phpcs:ignore ?></a>
+				<div class="pulse-advertise__actions">
+					<?php if ( pulse_opt( 'advertise_url' ) ) : ?>
+						<a class="pulse-btn" href="<?php echo esc_url( pulse_opt( 'advertise_url' ) ); ?>"><?php esc_html_e( 'See our media kit', 'allbiohub-pulse' ); ?> <?php echo pulse_icon( 'arrow', 16 ); // phpcs:ignore ?></a>
+					<?php endif; ?>
+					<a class="pulse-btn<?php echo pulse_opt( 'advertise_url' ) ? ' pulse-btn--ghost' : ''; ?>" href="<?php echo esc_url( $pulse_contact ); ?>"><?php esc_html_e( 'Get in touch', 'allbiohub-pulse' ); ?> <?php echo pulse_icon( 'arrow', 16 ); // phpcs:ignore ?></a>
+				</div>
 			</div>
 		</section>
 	</article>

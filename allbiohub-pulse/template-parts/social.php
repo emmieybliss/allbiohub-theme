@@ -1,6 +1,6 @@
 <?php
 /**
- * Social profile links (Theme Settings → Social Profiles, else the Social menu).
+ * Social profile links (Theme Settings → Social Profiles, else the site's Social menu).
  *
  * @package AllBioHub_Pulse
  */
@@ -8,9 +8,9 @@
 defined( 'ABSPATH' ) || exit;
 
 $links = pulse_social_links();
-if ( ! $links && has_nav_menu( 'social' ) ) {
-	$locations = get_nav_menu_locations();
-	foreach ( (array) wp_get_nav_menu_items( $locations['social'] ) as $item ) {
+$pulse_menu = $links ? 0 : pulse_social_menu();
+if ( $pulse_menu ) {
+	foreach ( (array) wp_get_nav_menu_items( $pulse_menu ) as $item ) {
 		$host = (string) wp_parse_url( $item->url, PHP_URL_HOST );
 		foreach ( array( 'facebook', 'instagram', 'youtube', 'tiktok', 'linkedin', 'twitter' => 'x', 'x.com' => 'x' ) as $needle => $key ) {
 			$needle = is_int( $needle ) ? $key : $needle;

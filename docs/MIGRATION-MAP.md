@@ -162,11 +162,11 @@ These items are listed in Migration & Health. Pulse will not guess on any of the
    - Trump responds to Musk saying he’s ‘disappointed’…
    - Jake Tapper Says Cover-Up of Biden’s Mental Decline…
    - Ben Affleck Jennifer Lopez Family
-2. **No Technology or Lifestyle categories.** Should they be created and posts added to them? See 1.
+2. ✅ **Technology and Lifestyle categories:** approved. They are created automatically the first time Pulse is activated (logged, and can be undone while they are empty). Moving posts into them stays a manual, tick-box step.
 3. **Around the Web (212 posts):** a general news bucket that could be sorted into the new categories.
 4. **Editorial Submission (1 post):** decide which section it belongs to.
-5. **Social Menu:** `OptimistSky` handles and Google Plus need correct AllBioHub profile URLs.
-6. **Two different “Advertise With Us” targets:** the `/advertise-with-us/` page and `mediakitad.netlify.app`.
+5. ✅ **Social Menu:** approved to use as is. Pulse shows the links from the existing Social Menu even before menus are assigned (Facebook, YouTube, Twitter/X, Instagram, LinkedIn). Google Plus is skipped because the service is closed. The `OptimistSky` handles are shown as they are until better links are added in Theme Settings → Social Profiles.
+6. ✅ **Advertise With Us:** the owner chose `mediakitad.netlify.app`. A new setting (Theme Settings → General → Advertise link) defaults to it. Menu links to `/advertise-with-us/` open the media kit instead; the menus themselves and the page are not edited. Clear the setting to go back to the page.
 7. **Foxiz ad widgets with no direct Pulse equivalent:** `-14`, `-10` and `-11`, plus the Ruby template widget in the default sidebar.
 8. **Leftover shortcode `[calculate_years]` in 2 posts.** Pulse registers it so that it outputs an age instead of raw brackets. Its exact original behaviour is inferred and should be checked on those 2 posts.
 9. **25 empty tags and near-duplicate tags.** These are listed only.
@@ -196,7 +196,7 @@ Order: Header → Trending Now → **Hero + Trending Stories** → **Pinned Stor
 
 ## What activation will and won't do
 
-**On activation, Pulse:** registers its menus, sidebars, image sizes and settings with safe defaults, runs **detection** (this map, refreshed from live data), and saves the report. All ad placements start switched off, and pinned stories start empty, so the homepage falls back to the latest posts.
+**On activation, Pulse:** registers its menus, sidebars, image sizes and settings with safe defaults, runs **detection** (this map, refreshed from live data), and saves the report. It also runs two owner-approved steps once: it creates the Technology and Lifestyle categories, and it sets the accent purple from the main colour of your logo (adjusted so text stays readable). Both are logged under Migration & Health and can be undone. All ad placements start switched off, and pinned stories start empty, so the homepage falls back to the latest posts.
 
 **Pulse never:** deletes or edits posts, pages, media, terms, users, comments, Rank Math data, Foxiz settings or widgets. It never changes permalinks or slugs, and it never writes to post content.
 

@@ -2,8 +2,10 @@
 /**
  * AllBioHub → Migration & Health.
  *
- * On activation Pulse only DETECTS. Every change is a separate step an admin
- * approves; each applied step is logged with what is needed to undo it.
+ * On activation Pulse detects, and runs only the steps the site owner already
+ * approved for automatic use: creating the Technology and Lifestyle categories
+ * and matching the brand colour to the logo. Every other change is a separate
+ * step an admin approves. Each applied step is logged and can be undone.
  * Nothing here deletes or edits existing posts, pages, media, terms, users,
  * comments, SEO data, Foxiz settings or widgets.
  *
@@ -30,7 +32,26 @@ function pulse_on_activate( $old_name = '', $old_theme = null ) {
 			false
 		);
 	}
+	pulse_auto_steps();
 	update_option( PULSE_MIG_REPORT, pulse_detect(), false );
+}
+
+/**
+ * Owner-approved steps that run once, on first activation. Both only add
+ * things (two empty categories, two colour settings) and both can be undone.
+ */
+function pulse_auto_steps() {
+	if ( get_option( 'allbiohub_auto_steps' ) ) {
+		return;
+	}
+	update_option( 'allbiohub_auto_steps', time(), false );
+	$done = wp_list_pluck( (array) get_option( PULSE_MIG_LOG, array() ), 'step' );
+	if ( ! in_array( 'categories', $done, true ) ) {
+		pulse_step_categories();
+	}
+	if ( ! in_array( 'brand', $done, true ) && '' === pulse_opt_raw( 'accent' ) ) {
+		pulse_step_brand();
+	}
 }
 
 /**
@@ -177,6 +198,17 @@ function pulse_log_undo( $entry_id ) {
 						wp_delete_term( $term_id, 'category' );
 					}
 				}
+				break;
+			case 'brand':
+				$stored = (array) get_option( PULSE_OPTION, array() );
+				foreach ( (array) $u['previous'] as $key => $value ) {
+					if ( '' === $value ) {
+						unset( $stored[ $key ] ); // Back to the theme default.
+					} else {
+						$stored[ $key ] = $value;
+					}
+				}
+				update_option( PULSE_OPTION, $stored, true );
 				break;
 			case 'assign':
 				foreach ( (array) $u['pairs'] as $pair ) {
@@ -433,6 +465,9 @@ function pulse_migration_action() {
 		case 'categories':
 			pulse_step_categories();
 			break;
+		case 'brand':
+			pulse_step_brand();
+			break;
 		case 'views':
 			pulse_step_views();
 			break;
@@ -646,6 +681,17 @@ function pulse_migration_screen() {
 					<p><?php printf( esc_html__( '%d posts contain a readable YouTube, Vimeo or MP4 video.', 'allbiohub-pulse' ), count( array_diff( $r['videos']['found'], $r['videos']['migrated'] ) ) ); ?></p>
 					<p class="description"><?php esc_html_e( 'Affects: creates DRAFT videos (not public until you publish them) that link back to the original story. The original posts and their embeds are not changed.', 'allbiohub-pulse' ); ?></p>
 					<?php $form( 'videos', __( 'Apply', 'allbiohub-pulse' ), true, $backup ); ?>
+				</li>
+				<li>
+					<h3><?php esc_html_e( 'Match the brand colour to your logo', 'allbiohub-pulse' ); ?> <?php echo in_array( 'brand', $steps, true ) ? '<span class="pulse-check is-ok">✓</span>' : ''; ?></h3>
+					<?php $pulse_logo = pulse_logo_colour(); ?>
+					<p><?php echo $pulse_logo ? sprintf( esc_html__( 'Main colour found in your logo: %s', 'allbiohub-pulse' ), '<span class="pulse-swatch" style="background:' . esc_attr( $pulse_logo ) . '"></span> <code>' . esc_html( $pulse_logo ) . '</code>' ) : esc_html__( 'No logo colour found. Add your logo under Appearance → Customize → Site Identity.', 'allbiohub-pulse' ); // phpcs:ignore ?></p>
+					<p class="description"><?php esc_html_e( 'Affects: the accent colour only (links, buttons, labels). A darker or lighter shade is used where needed so text stays readable. You can change it any time under Theme Settings → Colours.', 'allbiohub-pulse' ); ?></p>
+					<?php
+					if ( $pulse_logo ) {
+						$form( 'brand', __( 'Apply', 'allbiohub-pulse' ) );
+					}
+					?>
 				</li>
 			</ol>
 		</section>

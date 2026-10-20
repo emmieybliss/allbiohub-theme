@@ -14,7 +14,7 @@ The theme is built and has passed a visual QA pass on a local copy that mirrors 
 
 1. Take a full backup (files and database). Use a staging copy if your host offers one.
 2. Upload `allbiohub-pulse/` to `wp-content/themes/` (or zip the folder and use Appearance → Themes → Add New → Upload).
-3. Activate it. Nothing is migrated on activation: Pulse only detects what is there.
+3. Activate it. Pulse detects what is there and runs only two owner-approved steps: it creates the Technology and Lifestyle categories and matches the accent purple to your logo. Both can be undone under AllBioHub → Migration & Health. Nothing else is migrated until you click it.
 4. Open **AllBioHub → Migration & Health** and apply the steps you want. Each one is logged and can be undone.
 5. Switching back to Foxiz restores the old site exactly, because Pulse never edits Foxiz settings, posts or the Elementor home page.
 

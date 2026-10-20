@@ -40,6 +40,7 @@ function pulse_settings_tabs() {
 				'tagline'      => array( __( 'Tagline', 'allbiohub-pulse' ), __( 'Shown in the footer and the homepage title area.', 'allbiohub-pulse' ) ),
 				'footer_about' => array( __( 'Short description', 'allbiohub-pulse' ), __( 'Shown in the footer under the logo.', 'allbiohub-pulse' ) ),
 				'logo_dark'    => array( __( 'Logo for dark mode (optional)', 'allbiohub-pulse' ), __( 'The main logo comes from Appearance → Customize → Site Identity. If your logo is dark, add a light version here.', 'allbiohub-pulse' ), 'media' ),
+				'advertise_url' => array( __( 'Advertise link', 'allbiohub-pulse' ), __( 'Your media kit. Menu links to the Advertise With Us page open this instead. Leave empty to keep the page.', 'allbiohub-pulse' ) ),
 			),
 		),
 		'header'      => array(
