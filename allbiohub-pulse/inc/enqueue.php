@@ -23,7 +23,8 @@ function pulse_enqueue() {
 		array(
 			'viewUrl' => ( pulse_opt( 'views_enabled' ) && is_singular( array( 'post', 'abh_video' ) ) ) ? esc_url_raw( rest_url( 'allbiohub/v1/view/' . get_queried_object_id() ) ) : '',
 			'i18n'    => array(
-				'copied' => __( 'Link copied', 'allbiohub-pulse' ),
+				'copied'         => __( 'Link copied', 'allbiohub-pulse' ),
+				'subscribeError' => __( 'Sorry, we could not sign you up just now. Please try again later.', 'allbiohub-pulse' ),
 			),
 		)
 	);

@@ -11,7 +11,7 @@ defined( 'ABSPATH' ) || exit;
 $class = isset( $args['class'] ) ? $args['class'] : 'pulse-nav__list';
 echo '<ul class="' . esc_attr( $class ) . '">';
 echo '<li class="menu-item' . ( is_front_page() ? ' current-menu-item' : '' ) . '"><a href="' . esc_url( home_url( '/' ) ) . '">' . esc_html__( 'Home', 'allbiohub-pulse' ) . '</a></li>';
-foreach ( array( 'celebrity', 'biography', 'business', 'technology', 'lifestyle', 'reviews' ) as $key ) {
+foreach ( array( 'celebrity', 'biography', 'business', 'technology', 'women', 'news', 'lifestyle', 'reviews' ) as $key ) {
 	$link = pulse_section_link( $key );
 	if ( $link ) {
 		$current = is_category() && pulse_section_for_term( get_queried_object() ) === $key;

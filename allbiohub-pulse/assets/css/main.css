@@ -388,8 +388,8 @@ figure { margin: 0; }
 
 .pulse-logo { margin: 0; font-size: inherit; line-height: 1; }
 .pulse-logo a { display: inline-flex; align-items: center; }
-.pulse-logo__img { width: auto; height: 34px; max-width: 180px; object-fit: contain; background: none; }
-@media (min-width: 1024px) { .pulse-logo__img { height: 40px; } }
+.pulse-logo__img { width: auto; height: 38px; max-width: 200px; object-fit: contain; background: none; }
+@media (min-width: 1024px) { .pulse-logo__img { height: 46px; } }
 .pulse-logo__img--dark { display: none; }
 :root[data-theme="dark"] .pulse-logo__img--light { display: none; }
 :root[data-theme="dark"] .pulse-logo__img--dark { display: block; }
@@ -1047,6 +1047,8 @@ html.pulse-locked { overflow: hidden; }
 .pulse-news__form input[type="email"] { flex: 1; min-width: 0; height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: transparent; color: var(--pulse-accent); font: inherit; }
 .pulse-news__form input[type="email"]::placeholder { color: color-mix(in srgb, var(--pulse-accent) 60%, transparent); }
 .pulse-news__form input[type="email"]:focus { outline: none; }
+.pulse-news__msg { margin-top: 10px; font-weight: 600; }
+.pulse-news__msg.is-error { color: #FFD6D6; }
 .pulse-news__form:focus-within { box-shadow: 0 0 0 3px color-mix(in srgb, var(--pulse-accent-ink) 40%, transparent); }
 .pulse-news .pulse-adslot-hint { color: inherit; border-color: color-mix(in srgb, var(--pulse-accent-ink) 40%, transparent); }
 .pulse-news .pulse-ad--line { color: inherit; }

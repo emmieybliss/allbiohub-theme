@@ -10,7 +10,7 @@ defined( 'ABSPATH' ) || exit;
 <footer class="pulse-footer">
 	<div class="pulse-wrap pulse-footer__grid">
 		<div class="pulse-footer__brand">
-			<?php pulse_part( 'logo', array( 'no_h1' => true ) ); ?>
+			<?php pulse_part( 'logo', array( 'no_h1' => true, 'on_dark' => true ) ); ?>
 			<p class="pulse-footer__tagline"><?php echo esc_html( pulse_opt( 'tagline' ) ); ?></p>
 			<p class="pulse-footer__about"><?php echo esc_html( pulse_opt( 'footer_about' ) ); ?></p>
 			<?php pulse_part( 'social' ); ?>
@@ -22,15 +22,7 @@ defined( 'ABSPATH' ) || exit;
 			if ( has_nav_menu( 'footer-1' ) ) {
 				wp_nav_menu( array( 'theme_location' => 'footer-1', 'container' => false, 'depth' => 1, 'fallback_cb' => false ) );
 			} else {
-				echo '<ul>';
-				foreach ( array( 'about-us', 'contact-us', 'privacy-policy', 'terms-of-use', 'advertise-with-us' ) as $slug ) {
-					$page = get_page_by_path( $slug );
-					if ( $page && 'publish' === $page->post_status ) {
-						$href = 'advertise-with-us' === $slug && pulse_opt( 'advertise_url' ) ? pulse_opt( 'advertise_url' ) : get_permalink( $page );
-						printf( '<li><a href="%s">%s</a></li>', esc_url( $href ), esc_html( get_the_title( $page ) ) );
-					}
-				}
-				echo '</ul>';
+				pulse_footer_page_list( array( 'about-us', 'meet-our-team', 'contact-us', 'submit-a-story', 'advertise-with-us', 'guest-post-rate-card', 'startups', 'donation' ) );
 			}
 			?>
 		</nav>
@@ -39,7 +31,7 @@ defined( 'ABSPATH' ) || exit;
 			<h2 class="pulse-footer__title"><?php esc_html_e( 'Categories', 'allbiohub-pulse' ); ?></h2>
 			<ul>
 				<?php
-				foreach ( array( 'celebrity', 'biography', 'business', 'technology', 'lifestyle', 'reviews' ) as $key ) {
+				foreach ( array( 'celebrity', 'biography', 'business', 'technology', 'women', 'news', 'lifestyle', 'reviews' ) as $key ) {
 					$link = pulse_section_link( $key );
 					if ( $link ) {
 						printf( '<li><a href="%s">%s</a></li>', esc_url( $link ), esc_html( pulse_section_label( $key ) ) );
@@ -52,12 +44,15 @@ defined( 'ABSPATH' ) || exit;
 			</ul>
 		</nav>
 
-		<?php if ( has_nav_menu( 'footer-2' ) ) : ?>
-			<nav class="pulse-footer__col" aria-label="<?php esc_attr_e( 'More from AllBioHub', 'allbiohub-pulse' ); ?>">
+		<nav class="pulse-footer__col" aria-label="<?php esc_attr_e( 'Policies', 'allbiohub-pulse' ); ?>">
+			<?php if ( has_nav_menu( 'footer-2' ) ) : ?>
 				<h2 class="pulse-footer__title"><?php esc_html_e( 'More', 'allbiohub-pulse' ); ?></h2>
 				<?php wp_nav_menu( array( 'theme_location' => 'footer-2', 'container' => false, 'depth' => 1, 'fallback_cb' => false ) ); ?>
-			</nav>
-		<?php endif; ?>
+			<?php else : ?>
+				<h2 class="pulse-footer__title"><?php esc_html_e( 'Policies', 'allbiohub-pulse' ); ?></h2>
+				<?php pulse_footer_page_list( pulse_policy_slugs() ); ?>
+			<?php endif; ?>
+		</nav>
 
 		<?php if ( is_active_sidebar( 'pulse-footer' ) ) : ?>
 			<div class="pulse-footer__col"><?php dynamic_sidebar( 'pulse-footer' ); ?></div>

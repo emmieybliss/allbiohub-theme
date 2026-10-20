@@ -1,7 +1,8 @@
 <?php
 /**
  * Pinned Stories (3–5, admin-ordered). Falls back to the latest stories when
- * nothing is pinned, without showing a "Pinned" badge on them.
+ * nothing is pinned, without numbering them. The heading is always
+ * "Pinned Stories" so phones and desktops match.
  *
  * @package AllBioHub_Pulse
  */
@@ -22,11 +23,7 @@ pulse_seen( $pinned );
 <section class="pulse-section pulse-pinned pulse-wrap" aria-labelledby="pulse-pinned-title">
 	<header class="pulse-sechead">
 		<h2 class="pulse-sechead__title" id="pulse-pinned-title">
-			<?php if ( $is_pin ) : ?>
-				<?php echo pulse_icon( 'pin', 18 ); // phpcs:ignore ?> <?php esc_html_e( 'Pinned stories', 'allbiohub-pulse' ); ?>
-			<?php else : ?>
-				<?php esc_html_e( 'Top stories', 'allbiohub-pulse' ); ?>
-			<?php endif; ?>
+			<?php echo pulse_icon( 'pin', 18 ); // phpcs:ignore ?> <?php esc_html_e( 'Pinned Stories', 'allbiohub-pulse' ); ?>
 		</h2>
 	</header>
 	<div class="pulse-rail pulse-pinned__grid" data-count="<?php echo esc_attr( count( $pinned ) ); ?>">

@@ -149,6 +149,28 @@
 		f.focus();
 	});
 
+	/* ---------- Newsletter: Brevo signup without leaving the page ---------- */
+	$$('[data-pulse-subscribe]').forEach(function (form) {
+		var msg = form.nextElementSibling;
+		form.addEventListener('submit', function (e) {
+			e.preventDefault();
+			var btn = $('button', form);
+			btn.disabled = true;
+			fetch(form.action, { method: 'POST', body: new FormData(form), credentials: 'same-origin' })
+				.then(function (r) { return r.json(); })
+				.catch(function () { return { ok: false, message: cfg.i18n.subscribeError }; })
+				.then(function (res) {
+					btn.disabled = false;
+					if (msg) {
+						msg.hidden = false;
+						msg.textContent = res.message || cfg.i18n.subscribeError;
+						msg.classList.toggle('is-error', !res.ok);
+					}
+					if (res.ok) { form.reset(); }
+				});
+		});
+	});
+
 	/* ---------- Copy link ---------- */
 	$$('[data-pulse-copy]').forEach(function (btn) {
 		btn.addEventListener('click', function () {

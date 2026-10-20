@@ -1,6 +1,6 @@
 <?php
 /**
- * STAY UPDATED WITH ALLBIOHUB. Uses the existing provider form (Brevo).
+ * STAY UPDATED WITH ALLBIOHUB. Signs readers up to the site's Brevo list.
  * Hidden from visitors until a form is configured.
  *
  * @package AllBioHub_Pulse
@@ -24,7 +24,7 @@ if ( ! $form && ! current_user_can( 'manage_options' ) ) {
 			<?php if ( $form ) : ?>
 				<?php echo $form; // phpcs:ignore WordPress.Security.EscapeOutput -- provider shortcode or escaped form. ?>
 			<?php else : ?>
-				<a class="pulse-adslot-hint" href="<?php echo esc_url( admin_url( 'admin.php?page=allbiohub&tab=newsletter' ) ); ?>"><?php esc_html_e( 'Connect your Brevo form to show the signup here (only admins see this).', 'allbiohub-pulse' ); ?></a>
+				<a class="pulse-adslot-hint" href="<?php echo esc_url( admin_url( 'admin.php?page=allbiohub&tab=newsletter' ) ); ?>"><?php esc_html_e( 'Add your Brevo list ID in Theme Settings → Newsletter to show the signup here (only admins see this).', 'allbiohub-pulse' ); ?></a>
 			<?php endif; ?>
 			<?php pulse_the_ad( 'newsletter_sponsor', 'line' ); ?>
 		</div>

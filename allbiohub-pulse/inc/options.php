@@ -23,8 +23,9 @@ function pulse_schema() {
 	}
 	$schema = array(
 		// General.
-		'tagline'               => array( 'text', 'Stories that inspire.' ),
+		'tagline'               => array( 'text', 'Inform. Inspire. Impact.' ),
 		'footer_about'          => array( 'textarea', 'AllBioHub is an African digital publication covering the people, stories, business and culture shaping the continent and the world.' ),
+		'logo_bundled'          => array( 'bool', 1 ),
 		'logo_dark'             => array( 'int', 0 ),
 		'advertise_url'         => array( 'url', 'https://mediakitad.netlify.app/' ),
 
@@ -73,7 +74,7 @@ function pulse_schema() {
 		'video_style'           => array( 'select:split|stacked', 'split' ),
 
 		// Category sections.
-		'sections'              => array( 'slugs', 'celebrity,business,technology,lifestyle,biography,reviews' ),
+		'sections'              => array( 'slugs', 'celebrity,business,technology,women,news,lifestyle,biography,reviews' ),
 		'section_posts'         => array( 'int', 5 ),
 
 		// Newsletter.
@@ -81,6 +82,8 @@ function pulse_schema() {
 		'newsletter_text'       => array( 'text', 'Subscribe to our newsletter and never miss our best stories.' ),
 		'newsletter_shortcode'  => array( 'text', '' ),
 		'newsletter_action'     => array( 'url', '' ),
+		'newsletter_brevo_list' => array( 'int', 0 ),
+		'newsletter_brevo_key'  => array( 'text', '' ),
 
 		// Social.
 		'social_facebook'       => array( 'url', '' ),

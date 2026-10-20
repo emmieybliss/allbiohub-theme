@@ -22,9 +22,9 @@ Pulse adds a **section map** on top of the existing categories. Category slugs, 
 | CELEBRITY NEWS `celebrity-news` (350) | **Celebrity News** | Homepage section, navigation item, archive | None |
 | STARTUP FOUNDERS & INNOVATOR `startup-founders-innovator` (29) | **Business & Startups** | Combined with Money & Career in one homepage section. Each category keeps its own archive page | None. Both archives keep their URLs and Rank Math titles and descriptions |
 | MONEY & CAREER `money-career` (13) | **Business & Startups** | As above | None |
-| WOMEN IN TECH `women-in-tech` (5) | **Technology** | Combined with the tags `allbiohub-tech`, `africatech` and `tech-news-nigeria` | None |
+| WOMEN IN TECH `women-in-tech` (5) | **Women in Tech** | Its own homepage section, navigation item and footer link (live rescan 2026-10-20) | None |
 | REVIEWS `reviews` (14) | **Reviews** | Homepage section, archive, and a review card style | None |
-| AROUND THE WEB `around-the-web` (212) | **Trending / Latest News** | Used as a source for the Trending ticker and the “Latest” strip | None |
+| AROUND THE WEB `around-the-web` (212) | **Around the Web** | Its own homepage section, navigation item and footer link, and a source for the Trending ticker | None |
 | SPONSORED `sponsored` (0) | **Sponsored** | Any post in this category is automatically shown with the SPONSORED badge and `rel="sponsored"` outbound links | None |
 | EDITORIAL SUBMISSION `editorial-submission` (1) | (not shown on the homepage) | Kept, and listed for review | None |
 | (none) | **Lifestyle** | The section stays **hidden** until a Lifestyle category exists | None |
@@ -141,7 +141,7 @@ Pulse's placements stay **disabled until you turn them on**. This means activati
 | Elementor | 2 pages and 25 posts | Pages built with Elementor render as they do now. The theme supports Elementor's content width |
 | Foxiz Core | Foxiz widgets and shortcodes | Should stay active until the migration report is clean. Pulse doesn't depend on it |
 | Ad Inserter, Ads.txt Manager | Revenue | Not changed (see 7) |
-| Brevo | Newsletter and web-push | The Pulse newsletter section embeds the Brevo form |
+| Brevo | Newsletter and web-push | With a Brevo list ID in Theme Settings → Newsletter, the Pulse signup box adds readers to that list (using the API key the Brevo plugin already has). Otherwise it shows a pasted form shortcode or the first Brevo plugin form |
 | WPCode | Header and footer scripts | Kept working through the standard hooks |
 | LiteSpeed Cache, Image Optimization | Performance | Assets are enqueued normally, with no inline-heavy output. Clear the cache once after switching themes |
 | Classic Editor, Classic Widgets, Advanced Editor Tools | Editing | Pulse styles classic-editor output (captions, alignments, tables, embeds) |
@@ -176,7 +176,7 @@ These items are listed in Migration & Health. Pulse will not guess on any of the
 
 ## 11. Homepage order (updated by Emmanuel on 2026-10-20) and the AllBioHub Video section
 
-Order: Header → Trending Now → **Hero + Trending Stories** → **Pinned Stories** → **Sponsored Content** → **Featured Biography + People You Should Know** → **AllBioHub Video** → **Celebrity · Business · Technology · Lifestyle** sections (plus Biography and Reviews if enabled) → Sponsored banner → Newsletter → Footer. Each section can be switched on or off and reordered in Theme Settings → Homepage.
+Order: Header → Trending Now → **Hero + Trending Stories** → **Pinned Stories** → **Sponsored Content** → **Featured Biography + People You Should Know** → **AllBioHub Video** → **Celebrity · Business · Technology · Women in Tech · Around the Web · Lifestyle** sections (plus Biography and Reviews if enabled) → Sponsored banner → Newsletter → Footer. Each section can be switched on or off and reordered in Theme Settings → Homepage.
 
 **Where the video comes from, in order. Nothing is hard-coded:**
 1. **A post the admin picks** in Theme Settings → Video: “Video of the Week”.

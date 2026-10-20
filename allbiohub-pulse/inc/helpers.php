@@ -331,3 +331,31 @@ function pulse_is_app_page( $post = null ) {
 	$is_app  = (bool) preg_match( '/\[abh_|<!-- wp:(abh|allbiohub)/i', $content );
 	return (bool) apply_filters( 'pulse_is_app_page', $is_app, $post );
 }
+
+/**
+ * Policy and legal pages found on allbiohub.com (2026-10-20 rescan), in the
+ * order the footer lists them. Pages that don't exist are skipped.
+ */
+function pulse_policy_slugs() {
+	return apply_filters(
+		'pulse_policy_slugs',
+		array( 'privacy-policy', 'terms-of-use', 'cookie-policy', 'disclaimer', 'dmca-notice', 'copyright-policy', 'editorial-policy', 'advertising-partnership-policy', 'blissblock-privacy' )
+	);
+}
+
+/**
+ * Footer list of existing, published pages by slug. The Advertise With Us
+ * page opens the media kit when that setting is filled.
+ */
+function pulse_footer_page_list( $slugs ) {
+	echo '<ul>';
+	foreach ( $slugs as $slug ) {
+		$page = get_page_by_path( $slug );
+		if ( ! $page || 'publish' !== $page->post_status ) {
+			continue;
+		}
+		$href = 'advertise-with-us' === $slug && pulse_opt( 'advertise_url' ) ? pulse_opt( 'advertise_url' ) : get_permalink( $page );
+		printf( '<li><a href="%s">%s</a></li>', esc_url( $href ), esc_html( get_the_title( $page ) ) );
+	}
+	echo '</ul>';
+}

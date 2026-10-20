@@ -21,7 +21,8 @@ function pulse_section_defaults() {
 		'celebrity'  => array( 'label' => 'Celebrity News', 'cats' => array( 'celebrity-news', 'celebrity' ), 'tags' => array() ),
 		'biography'  => array( 'label' => 'Biography', 'cats' => array( 'biography' ), 'tags' => array() ),
 		'business'   => array( 'label' => 'Business & Startups', 'cats' => array( 'startup-founders-innovator', 'money-career', 'business' ), 'tags' => array() ),
-		'technology' => array( 'label' => 'Technology', 'cats' => array( 'technology', 'women-in-tech' ), 'tags' => array( 'allbiohub-tech', 'africatech', 'tech-news-nigeria' ) ),
+		'technology' => array( 'label' => 'Technology', 'cats' => array( 'technology' ), 'tags' => array( 'allbiohub-tech', 'africatech', 'tech-news-nigeria' ) ),
+		'women'      => array( 'label' => 'Women in Tech', 'cats' => array( 'women-in-tech' ), 'tags' => array() ),
 		'lifestyle'  => array( 'label' => 'Lifestyle', 'cats' => array( 'lifestyle' ), 'tags' => array() ),
 		'reviews'    => array( 'label' => 'Reviews', 'cats' => array( 'reviews' ), 'tags' => array() ),
 		'news'       => array( 'label' => 'Around the Web', 'cats' => array( 'around-the-web' ), 'tags' => array() ),
@@ -111,7 +112,7 @@ function pulse_section_posts( $key, $count = 4, $exclude = array() ) {
  */
 function pulse_section_link( $key ) {
 	$terms = pulse_section_terms( $key );
-	if ( $terms['primary'] ) {
+	if ( $terms['primary'] && $terms['primary']->count ) {
 		$link = get_term_link( $terms['primary'] );
 		return is_wp_error( $link ) ? '' : $link;
 	}

@@ -39,6 +39,7 @@ function pulse_settings_tabs() {
 			'fields' => array(
 				'tagline'      => array( __( 'Tagline', 'allbiohub-pulse' ), __( 'Shown in the footer and the homepage title area.', 'allbiohub-pulse' ) ),
 				'footer_about' => array( __( 'Short description', 'allbiohub-pulse' ), __( 'Shown in the footer under the logo.', 'allbiohub-pulse' ) ),
+				'logo_bundled' => array( __( 'Use the AllBioHub Media logo', 'allbiohub-pulse' ), __( 'Shows the logo that comes with the theme, with a light version for dark mode. Turn off to use the logo from Appearance → Customize → Site Identity.', 'allbiohub-pulse' ) ),
 				'logo_dark'    => array( __( 'Logo for dark mode (optional)', 'allbiohub-pulse' ), __( 'The main logo comes from Appearance → Customize → Site Identity. If your logo is dark, add a light version here.', 'allbiohub-pulse' ), 'media' ),
 				'advertise_url' => array( __( 'Advertise link', 'allbiohub-pulse' ), __( 'Your media kit. Menu links to the Advertise With Us page open this instead. Leave empty to keep the page.', 'allbiohub-pulse' ) ),
 			),
@@ -142,8 +143,10 @@ function pulse_settings_tabs() {
 			'fields' => array(
 				'newsletter_title'     => array( __( 'Title', 'allbiohub-pulse' ), '' ),
 				'newsletter_text'      => array( __( 'Text', 'allbiohub-pulse' ), '' ),
-				'newsletter_shortcode' => array( __( 'Brevo form shortcode', 'allbiohub-pulse' ), __( 'From Brevo → Forms, e.g. [sibwp_form id=1]. Your existing Brevo lists stay as they are.', 'allbiohub-pulse' ) ),
-				'newsletter_action'    => array( __( 'Or: form action URL', 'allbiohub-pulse' ), __( 'For any other provider that accepts a plain email form post.', 'allbiohub-pulse' ) ),
+				'newsletter_brevo_list' => array( __( 'Brevo list ID', 'allbiohub-pulse' ), __( 'In Brevo → Contacts → Lists, the number next to your newsletter list. With this set, the theme\'s own signup box adds readers straight to that list.', 'allbiohub-pulse' ) ),
+				'newsletter_brevo_key'  => array( __( 'Brevo API key (optional)', 'allbiohub-pulse' ), __( 'Leave empty to use the key already saved in the Brevo plugin. Otherwise paste a key from Brevo → SMTP & API → API keys.', 'allbiohub-pulse' ), 'secret' ),
+				'newsletter_shortcode'  => array( __( 'Or: Brevo form shortcode', 'allbiohub-pulse' ), __( 'Shows a form made in Brevo → Forms instead, e.g. [sibwp_form id=1]. If no list ID or shortcode is set, the first Brevo plugin form is used.', 'allbiohub-pulse' ) ),
+				'newsletter_action'     => array( __( 'Or: form action URL', 'allbiohub-pulse' ), __( 'For any other provider that accepts a plain email form post.', 'allbiohub-pulse' ) ),
 			),
 		),
 		'seo'         => array(
@@ -259,6 +262,8 @@ function pulse_render_field( $key, $def ) {
 		echo '</ol></div>';
 	} elseif ( 'media' === $control ) {
 		printf( '<input type="hidden" name="%s" value="%s" data-pulse-media-input><button type="button" class="button" data-pulse-media="image">%s</button> <span data-pulse-media-label>%s</span>', esc_attr( $name ), esc_attr( $value ), esc_html__( 'Select image', 'allbiohub-pulse' ), $value ? wp_get_attachment_image( (int) $value, 'thumbnail' ) : '' ); // phpcs:ignore
+	} elseif ( 'secret' === $control ) {
+		printf( '<input type="password" class="regular-text" id="%s" name="%s" value="%s" autocomplete="off" spellcheck="false">', esc_attr( $id ), esc_attr( $name ), esc_attr( $value ) );
 	} elseif ( 'bool' === $type ) {
 		printf( '<label class="pulse-switch"><input type="checkbox" id="%s" name="%s" value="1" %s><span></span></label>', esc_attr( $id ), esc_attr( $name ), checked( (int) $value, 1, false ) );
 	} elseif ( 0 === strpos( $type, 'select:' ) ) {
