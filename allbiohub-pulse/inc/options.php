@@ -73,7 +73,7 @@ function pulse_schema() {
 
 		// Category sections.
 		'sections'              => array( 'slugs', 'celebrity,business,technology,lifestyle,biography,reviews' ),
-		'section_posts'         => array( 'int', 4 ),
+		'section_posts'         => array( 'int', 5 ),
 
 		// Newsletter.
 		'newsletter_title'      => array( 'text', 'Stay updated with AllBioHub' ),

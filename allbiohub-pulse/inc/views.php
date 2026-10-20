@@ -21,7 +21,7 @@ function pulse_views_route() {
 			'methods'             => 'POST',
 			'callback'            => 'pulse_views_hit',
 			'permission_callback' => '__return_true',
-			'args'                => array( 'id' => array( 'validate_callback' => 'is_numeric' ) ),
+			'args'                => array( 'id' => array( 'validate_callback' => function ( $v ) { return is_numeric( $v ); } ) ),
 		)
 	);
 }

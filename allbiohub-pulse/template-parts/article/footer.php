@@ -27,6 +27,7 @@ $tags   = get_the_tags();
 		</div>
 	<?php endif; ?>
 
+	<?php if ( pulse_byline() ) : ?>
 	<section class="pulse-authorbox" aria-label="<?php esc_attr_e( 'About the author', 'allbiohub-pulse' ); ?>">
 		<a href="<?php echo esc_url( get_author_posts_url( $author ) ); ?>" tabindex="-1" aria-hidden="true"><?php echo get_avatar( $author, 72 ); ?></a>
 		<div>
@@ -37,4 +38,5 @@ $tags   = get_the_tags();
 			<?php endif; ?>
 		</div>
 	</section>
+	<?php endif; ?>
 </footer>

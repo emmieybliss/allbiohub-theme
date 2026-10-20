@@ -4,7 +4,19 @@ A custom WordPress theme for [AllBioHub](https://allbiohub.com), an African digi
 
 ## Status
 
-Phase 1 audit is done and Phase 2 (migration map) is drafted from the real site data. See **[docs/PLAN.md](docs/PLAN.md)** for the audit status, migration map, architecture, design system and build phases.
+The theme is built and has passed a visual QA pass on a local copy that mirrors the live site's structure. It has not been installed on the live site yet.
+
+- **[docs/PLAN.md](docs/PLAN.md)**: audit findings, architecture, design system and build phases
+- **[docs/MIGRATION-MAP.md](docs/MIGRATION-MAP.md)**: what changes, and what happens to URLs, SEO, content and media for each change
+- **[docs/VISUAL-QA.md](docs/VISUAL-QA.md)**: what was checked, what was fixed, and what still needs checking on the real site
+
+## Installing safely
+
+1. Take a full backup (files and database). Use a staging copy if your host offers one.
+2. Upload `allbiohub-pulse/` to `wp-content/themes/` (or zip the folder and use Appearance → Themes → Add New → Upload).
+3. Activate it. Nothing is migrated on activation: Pulse only detects what is there.
+4. Open **AllBioHub → Migration & Health** and apply the steps you want. Each one is logged and can be undone.
+5. Switching back to Foxiz restores the old site exactly, because Pulse never edits Foxiz settings, posts or the Elementor home page.
 
 ## Repository layout
 
@@ -12,7 +24,9 @@ Phase 1 audit is done and Phase 2 (migration map) is drafted from the real site 
 |---|---|
 | `docs/PLAN.md` | Audit findings, migration map and design plan |
 | `tools/allbiohub-audit/` | Read-only audit plugin. Install it on the live site, then go to **Tools → AllBioHub Audit → Download audit JSON** |
-| `allbiohub-pulse/` | The theme (coming in Phase 3) |
+| `allbiohub-pulse/` | The theme |
+| `docs/MIGRATION-MAP.md` | Per-change impact on URLs, SEO, content and media |
+| `docs/VISUAL-QA.md` | Visual QA report |
 
 ## Safety
 

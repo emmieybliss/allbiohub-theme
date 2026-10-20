@@ -62,6 +62,8 @@ function pulse_excerpt( $post = null, $words = 26 ) {
 		return '';
 	}
 	$text = has_excerpt( $post ) ? $post->post_excerpt : strip_shortcodes( $post->post_content );
+	// Block tags become spaces so paragraphs don't run together.
+	$text = preg_replace( '#</?(p|div|h[1-6]|li|br|blockquote|figure|figcaption)\b[^>]*>#i', ' ', $text );
 	return wp_trim_words( wp_strip_all_tags( $text ), $words, '…' );
 }
 
@@ -229,7 +231,11 @@ function pulse_byline( $post = null ) {
 		return '';
 	}
 	$author = (int) $post->post_author;
-	return sprintf( '<a class="pulse-byline" href="%s">%s</a>', esc_url( get_author_posts_url( $author ) ), esc_html( get_the_author_meta( 'display_name', $author ) ) );
+	$name   = get_the_author_meta( 'display_name', $author );
+	if ( '' === trim( (string) $name ) ) {
+		return '';
+	}
+	return sprintf( '<a class="pulse-byline" href="%s">%s</a>', esc_url( get_author_posts_url( $author ) ), esc_html( $name ) );
 }
 
 /**

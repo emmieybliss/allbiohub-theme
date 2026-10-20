@@ -17,8 +17,22 @@ $title = ! empty( $args['title'] ) ? $args['title'] : __( 'In this story', 'allb
 <details class="pulse-toc" open>
 	<summary class="pulse-toc__title"><?php echo esc_html( $title ); ?> <?php echo pulse_icon( 'chevron', 16 ); // phpcs:ignore ?></summary>
 	<ol class="pulse-toc__list">
-		<?php foreach ( $items as $item ) : ?>
-			<li class="pulse-toc__item pulse-toc__item--h<?php echo (int) $item['level']; ?>"><a href="#<?php echo esc_attr( $item['id'] ); ?>"><?php echo esc_html( $item['text'] ); ?></a></li>
-		<?php endforeach; ?>
+		<?php
+		$open = false;
+		foreach ( $items as $i => $item ) {
+			$link = '<a href="#' . esc_attr( $item['id'] ) . '">' . esc_html( $item['text'] ) . '</a>';
+			if ( 3 === $item['level'] && $i > 0 ) {
+				echo ( $open ? '' : '<ol class="pulse-toc__sub">' ) . '<li class="pulse-toc__item pulse-toc__item--h3">' . $link . '</li>'; // phpcs:ignore WordPress.Security.EscapeOutput
+				$open = true;
+				continue;
+			}
+			if ( $i > 0 ) {
+				echo ( $open ? '</ol>' : '' ) . '</li>';
+			}
+			$open = false;
+			echo '<li class="pulse-toc__item">' . $link; // phpcs:ignore WordPress.Security.EscapeOutput
+		}
+		echo ( $open ? '</ol>' : '' ) . '</li>';
+		?>
 	</ol>
 </details>

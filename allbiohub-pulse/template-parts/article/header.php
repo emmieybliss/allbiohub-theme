@@ -25,9 +25,11 @@ $modified  = get_post_modified_time( 'U', true, $post_id ) - get_post_time( 'U',
 		<p class="pulse-art__dek"><?php echo esc_html( $subtitle ); ?></p>
 	<?php endif; ?>
 	<div class="pulse-art__byline">
-		<a class="pulse-art__avatar" href="<?php echo esc_url( get_author_posts_url( $author ) ); ?>" tabindex="-1" aria-hidden="true"><?php echo get_avatar( $author, 44, '', '', array( 'loading' => 'eager' ) ); ?></a>
+		<?php if ( $author ) : ?><a class="pulse-art__avatar" href="<?php echo esc_url( get_author_posts_url( $author ) ); ?>" tabindex="-1" aria-hidden="true"><?php echo get_avatar( $author, 44, '', '', array( 'loading' => 'eager' ) ); ?></a><?php endif; ?>
 		<div class="pulse-art__who">
-			<span class="pulse-art__by"><?php esc_html_e( 'By', 'allbiohub-pulse' ); ?> <?php echo pulse_byline( $post_id ); // phpcs:ignore ?></span>
+			<?php if ( pulse_byline( $post_id ) ) : ?>
+				<span class="pulse-art__by"><?php esc_html_e( 'By', 'allbiohub-pulse' ); ?> <?php echo pulse_byline( $post_id ); // phpcs:ignore ?></span>
+			<?php endif; ?>
 			<span class="pulse-meta">
 				<?php echo pulse_time( $post_id ); // phpcs:ignore ?>
 				<?php if ( $modified ) : ?>
