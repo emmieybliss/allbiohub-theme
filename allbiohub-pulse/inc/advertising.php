@@ -27,7 +27,7 @@ function pulse_ad_slots() {
 		'category_sponsor'   => array( __( 'Category Sponsor', 'allbiohub-pulse' ), 'home', __( 'Shown on category pages and homepage category sections.', 'allbiohub-pulse' ) ),
 		'newsletter_sponsor' => array( __( 'Newsletter Sponsor', 'allbiohub-pulse' ), 'home', __( 'Line inside the newsletter block.', 'allbiohub-pulse' ) ),
 		'article_top'        => array( __( 'Article Top', 'allbiohub-pulse' ), 'article', __( 'Below the article hero image.', 'allbiohub-pulse' ) ),
-		'inline'             => array( __( 'Inline Article Advertisement', 'allbiohub-pulse' ), 'article', __( 'Inside the article body, after the chosen paragraph.', 'allbiohub-pulse' ) ),
+		'inline'             => array( __( 'Inline Article Advertisement', 'allbiohub-pulse' ), 'article', __( 'Inside the article body, after the chosen paragraphs.', 'allbiohub-pulse' ) ),
 		'sidebar'            => array( __( 'Sidebar Advertisement', 'allbiohub-pulse' ), 'article', __( 'Article and archive sidebar.', 'allbiohub-pulse' ) ),
 		'article_bottom'     => array( __( 'Article Bottom', 'allbiohub-pulse' ), 'article', __( 'After the article, before related stories.', 'allbiohub-pulse' ) ),
 		'footer'             => array( __( 'Footer Advertisement', 'allbiohub-pulse' ), 'footer', __( 'Above the footer on every page.', 'allbiohub-pulse' ) ),
@@ -56,7 +56,8 @@ function pulse_ad_defaults() {
 		'tracking'    => '',
 		'track_imp'   => 0,
 		'track_click' => 1,
-		'after_para'  => 3,
+		'after_para'  => '3',
+		'repeat'      => 0,
 	);
 }
 
@@ -194,24 +195,48 @@ function pulse_ad_shortcode( $atts ) {
 }
 
 /**
- * Inline article ad after paragraph N (render-time; content is not edited).
+ * Paragraph numbers for the inline ad: the listed ones (e.g. "3, 8, 14"),
+ * then every N paragraphs after the last one when "repeat" is set.
+ * At most 10 ads per article.
+ */
+function pulse_inline_positions( $ad, $total ) {
+	$list = array_filter( array_map( 'absint', preg_split( '/[^0-9]+/', (string) $ad['after_para'] ) ) );
+	$list = $list ? $list : array( 3 );
+	$list = array_values( array_unique( $list ) );
+	sort( $list );
+	$every = (int) $ad['repeat'];
+	if ( $every > 0 ) {
+		for ( $n = end( $list ) + $every; $n < $total; $n += $every ) {
+			$list[] = $n;
+		}
+	}
+	// Never after the last paragraph, so the article doesn't end on an ad.
+	$list = array_filter( $list, function ( $n ) use ( $total ) { return $n < $total; } );
+	return array_slice( array_values( $list ), 0, 10 );
+}
+
+/**
+ * Inline article ads after the chosen paragraphs (render-time; content is
+ * not edited).
  */
 add_filter( 'the_content', 'pulse_inline_ad', 40 );
 function pulse_inline_ad( $content ) {
 	if ( ! is_singular( 'post' ) || ! in_the_loop() || ! is_main_query() || pulse_is_sponsored() || ! pulse_ad_is_active( 'inline' ) ) {
 		return $content;
 	}
-	$after = max( 1, (int) pulse_ad( 'inline' )['after_para'] );
 	$parts = preg_split( '/(<\/p>)/i', $content, -1, PREG_SPLIT_DELIM_CAPTURE );
-	if ( count( $parts ) < ( $after * 2 ) + 2 ) {
+	$total = (int) floor( count( $parts ) / 2 );
+	$at    = pulse_inline_positions( pulse_ad( 'inline' ), $total );
+	if ( ! $at ) {
 		return $content;
 	}
+	$ad  = pulse_render_ad( 'inline', 'inline' );
 	$out = '';
 	$n   = 0;
 	foreach ( $parts as $part ) {
 		$out .= $part;
-		if ( 0 === strcasecmp( $part, '</p>' ) && ++$n === $after ) {
-			$out .= pulse_render_ad( 'inline', 'inline' );
+		if ( 0 === strcasecmp( $part, '</p>' ) && in_array( ++$n, $at, true ) ) {
+			$out .= $ad;
 		}
 	}
 	return $out;
@@ -330,7 +355,8 @@ function pulse_ad_save() {
 		'tracking'    => esc_url_raw( isset( $in['tracking'] ) ? $in['tracking'] : '' ),
 		'track_imp'   => empty( $in['track_imp'] ) ? 0 : 1,
 		'track_click' => empty( $in['track_click'] ) ? 0 : 1,
-		'after_para'  => max( 1, min( 20, absint( isset( $in['after_para'] ) ? $in['after_para'] : 3 ) ) ),
+		'after_para'  => implode( ', ', array_slice( array_unique( array_filter( array_map( 'absint', preg_split( '/[^0-9]+/', (string) ( isset( $in['after_para'] ) ? $in['after_para'] : '3' ) ) ) ) ), 0, 10 ) ),
+		'repeat'      => min( 50, absint( isset( $in['repeat'] ) ? $in['repeat'] : 0 ) ),
 	);
 	if ( '' === $ad['label'] ) {
 		$ad['label'] = __( 'Sponsored', 'allbiohub-pulse' );
@@ -417,7 +443,8 @@ function pulse_ads_screen() {
 					<p class="pulse-field"><label><strong><?php esc_html_e( 'End date', 'allbiohub-pulse' ); ?></strong><br><input type="date" name="ad[end]" value="<?php echo esc_attr( $ad['end'] ); ?>"></label></p>
 					<p class="pulse-field"><label><strong><?php esc_html_e( 'Impression tracking pixel URL', 'allbiohub-pulse' ); ?></strong><br><input class="widefat" type="url" name="ad[tracking]" value="<?php echo esc_attr( $ad['tracking'] ); ?>"></label></p>
 					<?php if ( 'inline' === $current ) : ?>
-						<p class="pulse-field"><label><strong><?php esc_html_e( 'Insert after paragraph', 'allbiohub-pulse' ); ?></strong><br><input type="number" min="1" max="20" name="ad[after_para]" value="<?php echo esc_attr( $ad['after_para'] ); ?>"></label></p>
+						<p class="pulse-field"><label><strong><?php esc_html_e( 'Insert after paragraphs', 'allbiohub-pulse' ); ?></strong><br><input type="text" inputmode="numeric" class="regular-text" name="ad[after_para]" value="<?php echo esc_attr( $ad['after_para'] ); ?>" placeholder="3, 8, 14"></label><br><span class="description"><?php esc_html_e( 'One or more paragraph numbers, separated by commas. Example: 3, 8, 14 shows the ad three times.', 'allbiohub-pulse' ); ?></span></p>
+						<p class="pulse-field"><label><strong><?php esc_html_e( 'Then repeat every … paragraphs', 'allbiohub-pulse' ); ?></strong><br><input type="number" min="0" max="50" class="small-text" name="ad[repeat]" value="<?php echo esc_attr( $ad['repeat'] ); ?>"></label><br><span class="description"><?php esc_html_e( 'Optional. For long articles, keeps adding the ad every this many paragraphs after the last number above. 0 = off. Up to 10 ads per article, and never after the last paragraph.', 'allbiohub-pulse' ); ?></span></p>
 					<?php endif; ?>
 				</div>
 				<p class="pulse-field">
