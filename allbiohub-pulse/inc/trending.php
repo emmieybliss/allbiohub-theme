@@ -30,6 +30,15 @@ function pulse_published_only( array $ids ) {
  * Posts for the slim ticker under the header.
  */
 function pulse_ticker_ids() {
+	static $cache = null; // Used by the ticker and the search panel on the same page.
+	if ( null !== $cache ) {
+		return $cache;
+	}
+	$cache = pulse_ticker_ids_uncached();
+	return $cache;
+}
+
+function pulse_ticker_ids_uncached() {
 	$count  = max( 3, min( 15, (int) pulse_opt( 'ticker_count' ) ) );
 	$source = pulse_opt( 'ticker_source' );
 	$manual = pulse_published_only( pulse_opt_ids( 'ticker_posts' ) );

@@ -253,7 +253,11 @@ function pulse_icon( $name, $size = 20 ) {
 		'arrow'    => '<path d="M5 12h14M13 6l6 6-6 6"/>',
 		'chevron'  => '<path d="m6 9 6 6 6-6"/>',
 		'facebook' => '<path d="M14 8h3V4h-3a4 4 0 0 0-4 4v3H7v4h3v6h4v-6h3l1-4h-4V8Z"/>',
-		'x'        => '<path d="M4 4l16 16M20 4 4 20"/>',
+		'x'        => '<path d="M17.8 3h3.1l-6.8 7.8L22 21h-6.2l-4.9-6.4L5.3 21H2.2l7.3-8.3L2 3h6.4l4.4 5.8L17.8 3Zm-1.1 16.2h1.7L7.4 4.7H5.6l11.1 14.5Z" fill="currentColor" stroke="none"/>',
+		'pinterest' => '<circle cx="12" cy="12" r="9"/><path d="M10.6 8.6h2.6a2.7 2.7 0 0 1 0 5.4h-1.9M11.7 8.6 9.6 20"/>',
+		'telegram' => '<path d="M21 4 3 11.2l6 2.1 2.1 6.2 3.2-4 4.6 3.4L21 4Z"/><path d="m9 13.3 8.5-6.3"/>',
+		'medium'   => '<ellipse cx="7.5" cy="12" rx="4.5" ry="5" fill="currentColor" stroke="none"/><ellipse cx="16" cy="12" rx="2.2" ry="4.6" fill="currentColor" stroke="none"/><ellipse cx="20.4" cy="12" rx="1" ry="4.2" fill="currentColor" stroke="none"/>',
+		'flipboard' => '<path d="M4 4h16v5.3h-5.3v5.4H9.3V20H4Z" fill="currentColor" stroke="none"/>',
 		'whatsapp' => '<path d="M4 20l1.3-4A8 8 0 1 1 8 19Z"/><path d="M9 9c0 3 3 6 6 6l1-1.5-2-1-1 1c-1-.5-2-1.5-2.5-2.5l1-1-1-2Z"/>',
 		'linkedin' => '<path d="M5 9v10M5 5v.01M9 19v-6a3 3 0 0 1 6 0v6M9 9v10"/>',
 		'link'     => '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
@@ -312,7 +316,7 @@ function pulse_seen( $ids = null ) {
  */
 function pulse_social_links() {
 	$out = array();
-	foreach ( array( 'facebook' => 'Facebook', 'x' => 'X', 'instagram' => 'Instagram', 'youtube' => 'YouTube', 'tiktok' => 'TikTok', 'linkedin' => 'LinkedIn' ) as $key => $label ) {
+	foreach ( array( 'facebook' => 'Facebook', 'x' => 'X', 'instagram' => 'Instagram', 'youtube' => 'YouTube', 'tiktok' => 'TikTok', 'linkedin' => 'LinkedIn', 'pinterest' => 'Pinterest', 'telegram' => 'Telegram', 'medium' => 'Medium', 'flipboard' => 'Flipboard' ) as $key => $label ) {
 		$url = pulse_opt( 'social_' . $key );
 		if ( $url ) {
 			$out[ $key ] = array( 'url' => $url, 'label' => $label );

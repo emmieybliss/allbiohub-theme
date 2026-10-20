@@ -49,8 +49,8 @@ defined( 'ABSPATH' ) || exit;
 
 		<div class="pulse-header__actions">
 			<?php if ( pulse_opt( 'header_search' ) ) : ?>
-				<button class="pulse-iconbtn" type="button" aria-controls="pulse-search" aria-expanded="false" data-pulse-search-open>
-					<?php echo pulse_icon( 'search', 20 ); // phpcs:ignore ?><span class="screen-reader-text"><?php esc_html_e( 'Search', 'allbiohub-pulse' ); ?></span>
+				<button class="pulse-iconbtn pulse-searchbtn" type="button" aria-controls="pulse-search" aria-expanded="false" data-pulse-search-open>
+					<?php echo pulse_icon( 'search', 20 ); // phpcs:ignore ?><span class="pulse-searchbtn__label"><?php esc_html_e( 'Search', 'allbiohub-pulse' ); ?></span>
 				</button>
 			<?php endif; ?>
 			<?php if ( pulse_opt( 'header_darkmode' ) ) : ?>
@@ -68,12 +68,20 @@ defined( 'ABSPATH' ) || exit;
 	<?php endif; ?>
 </header>
 
-<div class="pulse-search" id="pulse-search" role="dialog" aria-modal="true" aria-label="<?php esc_attr_e( 'Search AllBioHub', 'allbiohub-pulse' ); ?>" hidden>
-	<div class="pulse-wrap pulse-search__inner">
-		<?php get_search_form(); ?>
-		<button class="pulse-iconbtn" type="button" data-pulse-search-close><?php echo pulse_icon( 'close', 22 ); // phpcs:ignore ?><span class="screen-reader-text"><?php esc_html_e( 'Close search', 'allbiohub-pulse' ); ?></span></button>
+<?php if ( pulse_opt( 'header_search' ) ) : ?>
+	<div class="pulse-search" id="pulse-search" role="dialog" aria-modal="true" aria-label="<?php esc_attr_e( 'Search AllBioHub', 'allbiohub-pulse' ); ?>" hidden>
+		<div class="pulse-search__panel">
+			<div class="pulse-wrap pulse-search__inner">
+				<div class="pulse-search__bar">
+					<?php get_search_form(); ?>
+					<button class="pulse-search__cancel" type="button" data-pulse-search-close><?php esc_html_e( 'Cancel', 'allbiohub-pulse' ); ?></button>
+				</div>
+				<?php pulse_part( 'search-suggestions' ); ?>
+			</div>
+		</div>
+		<div class="pulse-search__scrim" data-pulse-search-close></div>
 	</div>
-</div>
+<?php endif; ?>
 
 <div class="pulse-drawer" id="pulse-drawer" role="dialog" aria-modal="true" aria-label="<?php esc_attr_e( 'Menu', 'allbiohub-pulse' ); ?>" hidden>
 	<div class="pulse-drawer__panel">

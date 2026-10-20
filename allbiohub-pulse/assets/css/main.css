@@ -522,20 +522,67 @@ figure { margin: 0; }
 .pulse-ticker:not(.is-running) .pulse-ticker__viewport { overflow-x: auto; scrollbar-width: none; }
 .pulse-header.is-scrolled-down .pulse-ticker { display: none; }
 
-/* Search overlay */
-.pulse-search {
-	position: fixed;
-	inset: 0 0 auto;
-	z-index: 200;
-	padding-block: 20px;
+/* Search panel: a sheet under the top of the screen with a dimmed page
+   behind it; full screen on phones, with a large field and a Cancel button
+   that is always in reach. */
+.pulse-search { position: fixed; inset: 0; z-index: 200; display: flex; flex-direction: column; }
+.pulse-search[hidden] { display: none; }
+.pulse-search__panel {
+	position: relative;
+	z-index: 1;
+	padding-block: 16px 20px;
 	background: var(--pulse-surface);
 	border-bottom: 1px solid var(--pulse-rule);
 	box-shadow: var(--pulse-shadow);
-	animation: pulse-drop .2s var(--pulse-ease);
+	animation: pulse-drop .18s var(--pulse-ease);
+	overflow-y: auto;
+	overscroll-behavior: contain;
 }
+.pulse-search__scrim { flex: 1; background: rgb(10 8 20 / .45); animation: pulse-fade .18s linear; }
 .admin-bar .pulse-search { top: 32px; }
-.pulse-search__inner { display: flex; align-items: center; gap: 12px; }
-.pulse-search__inner .pulse-searchform { flex: 1; }
+@media (max-width: 782px) { .admin-bar .pulse-search { top: 46px; } }
+.pulse-search__inner { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; }
+.pulse-search__bar { display: flex; align-items: center; gap: 10px; }
+.pulse-search__bar .pulse-searchform { flex: 1; min-width: 0; }
+.pulse-search__cancel {
+	flex: none;
+	min-height: 44px;
+	padding: 0 4px;
+	border: 0;
+	background: none;
+	color: var(--pulse-accent);
+	font: inherit;
+	font-weight: 600;
+	cursor: pointer;
+}
+.pulse-search__label { margin-bottom: 8px; font-size: .75rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--pulse-ink-2); }
+.pulse-search__extra .pulse-chips { margin-top: 0; margin-bottom: 18px; }
+.pulse-search__trending { display: grid; list-style: none; counter-reset: pulse-st; }
+.pulse-search__trending li { counter-increment: pulse-st; border-top: 1px solid var(--pulse-rule); }
+.pulse-search__trending a { display: flex; gap: 12px; align-items: baseline; padding: 12px 0; color: var(--pulse-ink); font-weight: 500; line-height: 1.35; }
+.pulse-search__trending a::before { content: counter(pulse-st); min-width: 1.2em; color: var(--pulse-accent); font-weight: 700; }
+.pulse-search__trending a:hover { color: var(--pulse-accent); }
+@media (max-width: 767px) {
+	.pulse-search__panel { flex: 1; border-bottom: 0; box-shadow: none; padding-top: max(12px, env(safe-area-inset-top)); }
+	.pulse-search__scrim { display: none; }
+	.pulse-search .pulse-searchform__btn { display: none; }
+	.pulse-search .pulse-searchform { padding-right: 16px; }
+	.pulse-search .pulse-searchform__input { height: 48px; font-size: 1.0625rem; }
+}
+@media (min-width: 768px) {
+	.pulse-search__inner { max-width: 760px; }
+}
+/* Header search button: a soft filled circle on phones so it reads as a
+   button; a labelled pill on wide screens. */
+.pulse-searchbtn__label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+@media (max-width: 1023px) { .pulse-searchbtn { background: var(--pulse-sunk); } }
+@media (min-width: 1280px) {
+	.pulse-searchbtn { display: inline-flex; align-items: center; width: auto; gap: 8px; padding: 0 16px 0 12px; border: 1px solid var(--pulse-rule-strong); color: var(--pulse-ink-2); }
+	.pulse-searchbtn__label { position: static; width: auto; height: auto; overflow: visible; clip: auto; font-size: .875rem; }
+}
+@keyframes pulse-drop { from { opacity: 0; transform: translateY(-8px); } }
+
+.pulse-searchform { flex: 1; }
 @keyframes pulse-drop { from { opacity: 0; transform: translateY(-8px); } }
 
 .pulse-searchform {
@@ -1361,3 +1408,14 @@ html.pulse-locked { overflow: hidden; }
 	.pulse-header, .pulse-footer, .pulse-sidebar, .pulse-ad, .pulse-share, .pulse-news, .pulse-related, .pulse-comments, .pulse-skip { display: none !important; }
 	body { background: #fff; color: #000; }
 }
+
+/* ---------- Speed and touch feel ---------- */
+/* Taps register immediately (no double-tap zoom wait) and show feedback. */
+a, button, input, select, textarea, label, summary { touch-action: manipulation; }
+html { -webkit-tap-highlight-color: transparent; }
+.pulse-iconbtn:active, .pulse-chip:active, .pulse-search__cancel:active { transform: scale(.94); }
+/* The browser skips laying out homepage sections until they scroll near the
+   screen, so the first view paints sooner on phones. */
+.pulse-home > .pulse-section ~ .pulse-section ~ .pulse-section,
+.pulse-footer { content-visibility: auto; contain-intrinsic-size: auto 720px; }
+

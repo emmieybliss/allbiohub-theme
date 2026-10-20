@@ -86,12 +86,17 @@ function pulse_schema() {
 		'newsletter_brevo_key'  => array( 'text', '' ),
 
 		// Social.
-		'social_facebook'       => array( 'url', '' ),
-		'social_x'              => array( 'url', '' ),
-		'social_instagram'      => array( 'url', '' ),
-		'social_youtube'        => array( 'url', '' ),
+		// Defaults: the profiles listed on allbiohub.com (2026-10-20 rescan).
+		'social_facebook'       => array( 'url', 'https://www.facebook.com/profile.php?id=61560487490281' ),
+		'social_x'              => array( 'url', 'https://x.com/allbiohubmedia' ),
+		'social_instagram'      => array( 'url', 'https://instagram.com/OptimistSky' ),
+		'social_youtube'        => array( 'url', 'https://www.youtube.com/OptimistSky' ),
 		'social_tiktok'         => array( 'url', '' ),
-		'social_linkedin'       => array( 'url', '' ),
+		'social_linkedin'       => array( 'url', 'https://www.linkedin.com/in/emmieybliss' ),
+		'social_pinterest'      => array( 'url', 'https://www.pinterest.com/Emmieybliss/' ),
+		'social_telegram'       => array( 'url', 'https://t.me/allbiohub' ),
+		'social_medium'         => array( 'url', 'https://medium.com/@emmiebliss05' ),
+		'social_flipboard'      => array( 'url', 'https://flipboard.com/@AllBioHub' ),
 
 		// Articles.
 		'article_toc'           => array( 'bool', 1 ),

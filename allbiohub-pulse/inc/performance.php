@@ -82,3 +82,18 @@ function pulse_flush_caches() {
 	global $wpdb;
 	$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '\\_transient\\_pulse\\_mv\\_%' OR option_name LIKE '\\_transient\\_timeout\\_pulse\\_mv\\_%'" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 }
+
+/**
+ * Faster page changes: when a reader hovers or presses a link, WordPress
+ * (6.8+) starts fetching that page in the background, so it opens almost
+ * instantly. Prefetch only, so view counts and ad impressions stay accurate.
+ */
+add_filter( 'wp_speculation_rules_configuration', 'pulse_speculation_rules' );
+function pulse_speculation_rules( $config ) {
+	if ( is_array( $config ) ) {
+		$config['mode']      = 'prefetch';
+		$config['eagerness'] = 'moderate';
+	}
+	return $config;
+}
+

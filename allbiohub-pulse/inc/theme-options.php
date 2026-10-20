@@ -136,6 +136,10 @@ function pulse_settings_tabs() {
 				'social_youtube'   => array( 'YouTube', '' ),
 				'social_tiktok'    => array( 'TikTok', '' ),
 				'social_linkedin'  => array( 'LinkedIn', '' ),
+				'social_pinterest' => array( 'Pinterest', '' ),
+				'social_telegram'  => array( 'Telegram', '' ),
+				'social_medium'    => array( 'Medium', '' ),
+				'social_flipboard' => array( 'Flipboard', '' ),
 			),
 		),
 		'newsletter'  => array(

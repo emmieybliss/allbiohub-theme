@@ -12,7 +12,7 @@ $pulse_menu = $links ? 0 : pulse_social_menu();
 if ( $pulse_menu ) {
 	foreach ( (array) wp_get_nav_menu_items( $pulse_menu ) as $item ) {
 		$host = (string) wp_parse_url( $item->url, PHP_URL_HOST );
-		foreach ( array( 'facebook', 'instagram', 'youtube', 'tiktok', 'linkedin', 'twitter' => 'x', 'x.com' => 'x' ) as $needle => $key ) {
+		foreach ( array( 'facebook', 'instagram', 'youtube', 'tiktok', 'linkedin', 'pinterest', 'medium', 'flipboard', 'twitter' => 'x', 'x.com' => 'x', 't.me' => 'telegram', 'telegram' ) as $needle => $key ) {
 			$needle = is_int( $needle ) ? $key : $needle;
 			if ( false !== stripos( $host, $needle ) && ! isset( $links[ $key ] ) ) {
 				$links[ $key ] = array( 'url' => $item->url, 'label' => $item->title );
