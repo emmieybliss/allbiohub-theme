@@ -1,0 +1,10 @@
+/* Classic / block editor: match the front-end article measure and type. */
+@font-face { font-family: "Instrument Serif"; font-weight: 400; font-display: swap; src: url("../fonts/instrument-serif-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "Inter"; font-weight: 100 900; font-display: swap; src: url("../fonts/inter-latin-wght-normal.woff2") format("woff2-variations"); }
+body, .editor-styles-wrapper { max-width: 720px; margin: 0 auto; padding: 16px; color: #111; background: #FBFAF7; font-family: "Inter", system-ui, sans-serif; font-size: 18px; line-height: 1.75; }
+h1, h2, h3 { font-family: "Instrument Serif", Georgia, serif; font-weight: 400; line-height: 1.12; }
+h2 { font-size: 36px; } h3 { font-size: 26px; }
+h4 { font-size: 19px; font-weight: 700; }
+a { color: #5B2BD9; }
+blockquote { margin-left: 0; padding-left: 24px; border-left: 3px solid #5B2BD9; font-family: "Instrument Serif", Georgia, serif; font-size: 24px; line-height: 1.35; }
+img { max-width: 100%; height: auto; }

@@ -1,0 +1,101 @@
+/* AllBioHub Pulse admin screens. Scoped to .pulse-admin and Pulse meta boxes. */
+.pulse-admin { --pa-accent: #5B2BD9; --pa-rule: #E2E0EA; --pa-ink-2: #5C5A57; max-width: 1280px; }
+.pulse-admin__head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; margin: 16px 0 20px; }
+.pulse-admin__head h1 { margin: 4px 0 0; padding: 0; font-size: 26px; line-height: 1.2; }
+.pulse-admin__head p { max-width: 760px; margin: 6px 0 0; color: var(--pa-ink-2); font-size: 14px; }
+.pulse-admin__brand { display: inline-flex; align-items: center; gap: 8px; color: var(--pa-ink-2); font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.pulse-admin__brand span { color: var(--pa-accent); }
+.pulse-admin__mark { width: 18px; height: 3px; background: var(--pa-accent); }
+
+.pulse-card { margin: 0 0 20px; padding: 20px 24px; background: #fff; border: 1px solid var(--pa-rule); border-radius: 8px; box-shadow: 0 1px 2px rgb(0 0 0 / 4%); }
+.pulse-card > h2:first-child, .pulse-card > h3:first-child { margin-top: 0; }
+
+.pulse-split { display: grid; gap: 20px; }
+@media (min-width: 960px) { .pulse-split { grid-template-columns: 220px minmax(0, 1fr); align-items: start; } }
+.pulse-sidenav { display: flex; flex-direction: column; gap: 2px; padding: 8px; background: #fff; border: 1px solid var(--pa-rule); border-radius: 8px; }
+@media (min-width: 960px) { .pulse-sidenav { position: sticky; top: 46px; } }
+.pulse-sidenav a { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 6px; color: #1d2327; text-decoration: none; font-weight: 500; }
+.pulse-sidenav a:hover { background: #f4f2fb; color: var(--pa-accent); }
+.pulse-sidenav a.is-current { background: var(--pa-accent); color: #fff; }
+.pulse-sidenav a:focus { box-shadow: 0 0 0 2px var(--pa-accent); }
+
+.pulse-row { display: grid; gap: 8px 24px; padding: 16px 0; border-top: 1px solid #f0f0f1; }
+.pulse-row:first-of-type { border-top: 0; }
+@media (min-width: 782px) { .pulse-row { grid-template-columns: 260px minmax(0, 1fr); } }
+.pulse-row__label label { font-weight: 600; }
+.pulse-row__label .description { margin-top: 4px; }
+
+/* Switch */
+.pulse-switch { position: relative; display: inline-block; width: 40px; height: 22px; }
+.pulse-switch input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; z-index: 1; }
+.pulse-switch span { position: absolute; inset: 0; border-radius: 22px; background: #c3c4c7; transition: background .15s; }
+.pulse-switch span::after { content: ""; position: absolute; left: 3px; top: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform .15s; }
+.pulse-switch input:checked + span { background: var(--pa-accent); }
+.pulse-switch input:checked + span::after { transform: translateX(18px); }
+.pulse-switch input:focus-visible + span { box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--pa-accent); }
+
+/* Picker */
+.pulse-picker { max-width: 640px; }
+.pulse-picker__list { margin: 0 0 10px; padding: 0; list-style: none; counter-reset: pick; }
+.pulse-picker__list li { display: grid; grid-template-columns: 22px 48px minmax(0, 1fr) auto; align-items: center; gap: 10px; margin-bottom: 6px; padding: 8px 10px; background: #fff; border: 1px solid var(--pa-rule); border-radius: 6px; cursor: grab; counter-increment: pick; }
+.pulse-picker__list li::before { content: counter(pick); color: var(--pa-accent); font-weight: 700; text-align: center; }
+.pulse-picker__list li.is-dragging { opacity: .5; }
+.pulse-picker__thumb, .pulse-picker__list .pulse-picker__thumb { width: 48px !important; height: 36px !important; object-fit: cover; border-radius: 3px; background: #f0f0f1; display: block; }
+.pulse-picker__title { min-width: 0; font-weight: 500; }
+.pulse-picker__title small { display: block; color: var(--pa-ink-2); font-weight: 400; }
+.pulse-picker__actions { display: flex; gap: 8px; }
+.pulse-picker__actions .button-link { text-decoration: none; }
+.pulse-danger, .pulse-picker__actions .pulse-danger { color: #b32d2e; }
+.pulse-picker__search { position: relative; }
+.pulse-picker__search input { width: 100%; }
+.pulse-picker__results { position: absolute; z-index: 10; left: 0; right: 0; margin: 2px 0 0; padding: 0; list-style: none; background: #fff; border: 1px solid var(--pa-rule); border-radius: 6px; box-shadow: 0 8px 24px rgb(0 0 0 / 12%); }
+.pulse-picker__results:empty { display: none; }
+.pulse-picker__results button { display: block; width: 100%; padding: 8px 12px; border: 0; background: none; text-align: left; cursor: pointer; }
+.pulse-picker__results button:hover, .pulse-picker__results button:focus { background: #f4f2fb; color: var(--pa-accent); }
+.pulse-picker__results .is-empty { padding: 8px 12px; color: var(--pa-ink-2); }
+
+/* Ordered checklist */
+.pulse-order ol { max-width: 480px; margin: 0; padding: 0; list-style: none; }
+.pulse-order li { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px; padding: 8px 12px; background: #fff; border: 1px solid var(--pa-rule); border-radius: 6px; }
+.pulse-order li .button-link { padding: 2px 6px; text-decoration: none; }
+
+/* Status, pills, checks, dots */
+.pulse-status { display: inline-block; padding: 2px 8px; border-radius: 10px; background: #f0f0f1; color: #50575e; font-size: 12px; font-weight: 600; }
+.pulse-status--on { background: #e6f4ea; color: #1e6b34; }
+.pulse-pill { display: inline-block; margin: 0 4px 2px 0; padding: 2px 8px; border-radius: 10px; background: #f0ebff; color: var(--pa-accent); font-size: 11px; font-weight: 700; }
+.pulse-pin-badge { display: inline-grid; place-items: center; min-width: 22px; height: 22px; border-radius: 11px; background: var(--pa-accent); color: #fff; font-weight: 700; font-size: 12px; }
+.pulse-check { font-weight: 600; }
+.pulse-check.is-ok { color: #1e6b34; }
+.pulse-check.is-warn { color: #8a5a00; }
+.pulse-check.is-err { color: #b32d2e; }
+.pulse-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #c3c4c7; flex: none; }
+.pulse-dot.is-on { background: #2ea44f; }
+.pulse-sidenav a.is-current .pulse-dot { box-shadow: 0 0 0 2px #fff; }
+
+/* Tables and stats */
+.pulse-table { width: 100%; border-collapse: collapse; }
+.pulse-table th, .pulse-table td { padding: 10px 12px; border-bottom: 1px solid #f0f0f1; text-align: left; vertical-align: top; }
+.pulse-table th { color: var(--pa-ink-2); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+.pulse-table tbody tr:hover { background: #fafafa; }
+.pulse-stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+.pulse-stat { padding: 14px; border-radius: 6px; background: #f6f5fa; }
+.pulse-stat strong { display: block; font-size: 22px; line-height: 1.2; }
+.pulse-stat span { color: var(--pa-ink-2); font-size: 12px; }
+.pulse-inventory { display: grid; gap: 20px; }
+
+.pulse-steps { margin: 0; padding: 0; list-style: none; counter-reset: step; }
+.pulse-steps > li { position: relative; padding: 16px 0 16px 44px; border-top: 1px solid #f0f0f1; counter-increment: step; }
+.pulse-steps > li::before { content: counter(step); position: absolute; left: 0; top: 16px; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: #f0ebff; color: var(--pa-accent); font-weight: 700; }
+.pulse-steps h3 { margin: 2px 0 6px; font-size: 15px; }
+.pulse-inline-form { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 6px 8px 0 0; }
+.pulse-backup { color: #8a5a00; font-weight: 600; }
+.pulse-suggest summary { cursor: pointer; font-weight: 600; }
+
+/* Ad form + meta boxes */
+.pulse-adform .pulse-toggle { margin-top: 0; padding: 10px 12px; background: #f6f5fa; border-radius: 6px; }
+.pulse-adtype, .pulse-fields { display: flex; flex-direction: column; gap: 10px; }
+.pulse-radio { display: inline-flex; align-items: center; gap: 4px; margin-right: 12px; }
+.pulse-field { margin: 8px 0; }
+.pulse-media { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+[data-pulse-media-label] img { width: 80px; height: 80px; object-fit: cover; border-radius: 4px; vertical-align: middle; }
+#pulse-video .pulse-field input[type="url"], #pulse-video .pulse-field input[type="text"] { width: 100%; }
