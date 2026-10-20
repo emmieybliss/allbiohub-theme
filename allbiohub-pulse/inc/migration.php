@@ -55,6 +55,24 @@ function pulse_auto_steps() {
 }
 
 /**
+ * The owner asked (2026-10-20) for all Foxiz ad codes to work in Pulse, so
+ * they are copied once, automatically, into placements that are still
+ * empty. Runs for sites already on Pulse too. Logged and undoable.
+ */
+add_action( 'admin_init', 'pulse_auto_import_foxiz_ads' );
+add_action( 'after_switch_theme', 'pulse_auto_import_foxiz_ads', 30 );
+function pulse_auto_import_foxiz_ads() {
+	if ( get_option( 'allbiohub_foxiz_ads_auto' ) || ( ! current_user_can( 'manage_options' ) && ! doing_action( 'after_switch_theme' ) ) ) {
+		return;
+	}
+	update_option( 'allbiohub_foxiz_ads_auto', time(), false );
+	if ( pulse_detect_foxiz_ads() ) {
+		pulse_step_foxiz_ads( true );
+		update_option( PULSE_MIG_REPORT, pulse_detect(), false );
+	}
+}
+
+/**
  * Read-only detection of everything the migration map covers.
  */
 function pulse_detect() {
@@ -89,22 +107,60 @@ function pulse_detect() {
 }
 
 /**
- * Foxiz Core ad-script widgets in Foxiz sidebars (read-only).
- *
- * @return array<string,array{sidebar:string,widget:string,code:string}>
+ * Foxiz sidebars as Foxiz left them. After switching themes WordPress keeps
+ * Foxiz's widget layout in its theme mods and may move some widgets into
+ * Pulse areas, so both places are read.
  */
-function pulse_detect_foxiz_ads() {
-	$map     = array(
+function pulse_foxiz_sidebars() {
+	$out  = array();
+	$mods = get_option( 'theme_mods_foxiz' );
+	if ( is_array( $mods ) && ! empty( $mods['sidebars_widgets']['data'] ) && is_array( $mods['sidebars_widgets']['data'] ) ) {
+		$out = $mods['sidebars_widgets']['data'];
+	}
+	foreach ( (array) wp_get_sidebars_widgets() as $sidebar => $widgets ) {
+		if ( is_array( $widgets ) && ( 0 === strpos( $sidebar, 'foxiz_' ) || 0 === strpos( $sidebar, 'pulse-' ) || 0 === strpos( $sidebar, 'orphaned_widgets' ) ) ) {
+			$out[ $sidebar ] = array_values( array_unique( array_merge( isset( $out[ $sidebar ] ) ? (array) $out[ $sidebar ] : array(), $widgets ) ) );
+		}
+	}
+	unset( $out['wp_inactive_widgets'], $out['array_version'] );
+	return $out;
+}
+
+/**
+ * Where each Foxiz ad area goes in Pulse.
+ */
+function pulse_foxiz_ad_map() {
+	return array(
 		'foxiz_header_ad'       => 'top',
 		'foxiz_entry_top'       => 'article_top',
 		'foxiz_entry_bottom'    => 'article_bottom',
 		'foxiz_sidebar_default' => 'sidebar',
+		'foxiz_ms_sb1'          => 'sidebar',
+		'foxiz_ms_sb2'          => 'sidebar',
+		'foxiz_ms_single'       => 'sidebar',
+		'foxiz_ms_blog'         => 'sidebar',
+		'foxiz_ms_contact'      => 'sidebar',
+		'foxiz_ms_next-posts'   => 'article_bottom',
+		'foxiz_sidebar_more'    => 'footer',
+		// Where WordPress may have moved them when the theme was switched.
+		'pulse-footer'          => 'footer',
+		'pulse-article'         => 'sidebar',
+		'pulse-archive'         => 'sidebar',
 	);
-	$sidebars = wp_get_sidebars_widgets();
-	$out      = array();
-	foreach ( (array) $sidebars as $sidebar => $widgets ) {
+}
+
+/**
+ * Every Foxiz ad (read-only): ad widgets in Foxiz sidebars, plus the ads set
+ * in Foxiz Theme Options (top site ad, in-article ads, auto ads code).
+ *
+ * @return array<string,array{sidebar:string,widget:string,code:string,target:string}>
+ */
+function pulse_detect_foxiz_ads() {
+	$map = pulse_foxiz_ad_map();
+	$out = array();
+	foreach ( pulse_foxiz_sidebars() as $sidebar => $widgets ) {
 		foreach ( (array) $widgets as $widget_id ) {
-			if ( ! preg_match( '/^(.+)-(\d+)$/', (string) $widget_id, $m ) || false === strpos( $m[1], 'ad' ) ) {
+			if ( ! preg_match( '/^(.+)-(\d+)$/', (string) $widget_id, $m ) || ! preg_match( '/(^|[-_])ads?([-_]|$)/', $m[1] ) || isset( $out[ $widget_id ] ) ) {
 				continue;
 			}
 			$opt  = get_option( 'widget_' . $m[1], array() );
@@ -115,6 +171,12 @@ function pulse_detect_foxiz_ads() {
 					$code = $field;
 				}
 			}
+			// An image ad widget: rebuild it as a linked image.
+			if ( '' === $code && ! empty( $inst['image'] ) ) {
+				$src  = is_array( $inst['image'] ) ? ( isset( $inst['image']['url'] ) ? $inst['image']['url'] : '' ) : ( is_numeric( $inst['image'] ) ? wp_get_attachment_url( (int) $inst['image'] ) : $inst['image'] );
+				$dest = isset( $inst['destination'] ) ? $inst['destination'] : ( isset( $inst['url'] ) ? $inst['url'] : '' );
+				$code = $src ? ( $dest ? '<a href="' . esc_url( $dest ) . '" target="_blank" rel="sponsored noopener">' : '' ) . '<img src="' . esc_url( $src ) . '" alt="" loading="lazy">' . ( $dest ? '</a>' : '' ) : '';
+			}
 			$out[ $widget_id ] = array(
 				'sidebar' => (string) $sidebar,
 				'widget'  => (string) $widget_id,
@@ -122,6 +184,71 @@ function pulse_detect_foxiz_ads() {
 				'target'  => isset( $map[ $sidebar ] ) ? $map[ $sidebar ] : '',
 			);
 		}
+	}
+	return $out + pulse_detect_foxiz_option_ads();
+}
+
+/**
+ * Ads saved in Foxiz Theme Options (Ads & Slide Up panel).
+ */
+function pulse_foxiz_options() {
+	foreach ( array( 'foxiz_theme_options', 'foxiz_options', 'foxiz' ) as $name ) {
+		$o = get_option( $name );
+		if ( is_array( $o ) && $o ) {
+			return $o;
+		}
+	}
+	return array();
+}
+
+function pulse_detect_foxiz_option_ads() {
+	$o   = pulse_foxiz_options();
+	$out = array();
+	if ( ! $o ) {
+		return $out;
+	}
+	// Group the ad_* keys by area: ad_top_code, ad_top_image … → "top".
+	$groups = array();
+	foreach ( $o as $key => $val ) {
+		if ( ! preg_match( '/^(ad_[a-z0-9_]+?)_(code|script|image|destination|url|positions?|type)$/', (string) $key, $m ) && ! preg_match( '/^((?:ads?_)?auto_ads?)(_code)?$/', (string) $key, $m ) ) {
+			continue;
+		}
+		$field                       = isset( $m[2] ) && '' !== $m[2] ? ltrim( $m[2], '_' ) : 'code';
+		$groups[ $m[1] ][ $field ] = $val;
+	}
+	foreach ( $groups as $area => $f ) {
+		$code = isset( $f['code'] ) && is_string( $f['code'] ) ? trim( $f['code'] ) : ( isset( $f['script'] ) && is_string( $f['script'] ) ? trim( $f['script'] ) : '' );
+		$img  = isset( $f['image'] ) ? $f['image'] : '';
+		$src  = is_array( $img ) ? ( isset( $img['url'] ) ? $img['url'] : '' ) : (string) $img;
+		$dest = isset( $f['destination'] ) ? (string) $f['destination'] : ( isset( $f['url'] ) ? (string) $f['url'] : '' );
+		$type = isset( $f['type'] ) ? (string) $f['type'] : '';
+		// Foxiz's type switch: "1"/"code" = script, "2"/"image" = image.
+		if ( '' === $code || ( $src && in_array( $type, array( '2', 'image' ), true ) ) ) {
+			$code = $src ? ( $dest ? '<a href="' . esc_url( $dest ) . '" target="_blank" rel="sponsored noopener">' : '' ) . '<img src="' . esc_url( $src ) . '" alt="" loading="lazy">' . ( $dest ? '</a>' : '' ) : '';
+		}
+		if ( '' === $code ) {
+			continue;
+		}
+		$target = '';
+		if ( preg_match( '/auto/', $area ) ) {
+			$target = 'head';
+		} elseif ( preg_match( '/top|header/', $area ) ) {
+			$target = 'top';
+		} elseif ( preg_match( '/single|inline|content|entry/', $area ) ) {
+			$target = 'inline';
+		} elseif ( preg_match( '/footer|bottom|slide/', $area ) ) {
+			$target = 'footer';
+		} elseif ( preg_match( '/sidebar/', $area ) ) {
+			$target = 'sidebar';
+		}
+		$pos = isset( $f['positions'] ) ? $f['positions'] : ( isset( $f['position'] ) ? $f['position'] : '' );
+		$out[ 'option:' . $area ] = array(
+			'sidebar'   => __( 'Foxiz Theme Options', 'allbiohub-pulse' ),
+			'widget'    => $area,
+			'code'      => $code,
+			'target'    => $target,
+			'positions' => is_array( $pos ) ? implode( ', ', $pos ) : (string) $pos,
+		);
 	}
 	return $out;
 }
@@ -189,6 +316,9 @@ function pulse_log_undo( $entry_id ) {
 					}
 				}
 				update_option( PULSE_ADS, $ads );
+				if ( ! empty( $u['sidebars'] ) ) {
+					wp_set_sidebars_widgets( $u['sidebars'] );
+				}
 				break;
 			case 'categories':
 				foreach ( (array) $u['created'] as $term_id ) {
@@ -271,29 +401,73 @@ function pulse_step_menus() {
 	return pulse_log_add( 'menus', sprintf( /* translators: %d: count */ __( 'Assigned %d menus to Pulse locations', 'allbiohub-pulse' ), count( pulse_menu_suggestions() ) ), array( 'previous' => $prev ) );
 }
 
-function pulse_step_foxiz_ads() {
-	$found  = pulse_detect_foxiz_ads();
-	$ads    = get_option( PULSE_ADS, array() );
-	$prev   = array();
-	$copied = 0;
+/**
+ * Copy every Foxiz ad into its Pulse placement. Several ads for the same
+ * placement are stacked in it (duplicates once). Foxiz ad widgets that
+ * WordPress moved into Pulse widget areas are taken out of those areas, so
+ * they don't show twice. $only_empty leaves placements already set up alone.
+ */
+function pulse_step_foxiz_ads( $only_empty = false ) {
+	$found   = pulse_detect_foxiz_ads();
+	$ads     = get_option( PULSE_ADS, array() );
+	$prev    = array();
+	$by_slot = array();
+	$pos     = array();
 	foreach ( $found as $row ) {
-		if ( ! $row['target'] || '' === trim( $row['code'] ) || isset( $prev[ $row['target'] ] ) ) {
+		if ( ! $row['target'] || '' === trim( $row['code'] ) ) {
 			continue;
 		}
-		$prev[ $row['target'] ] = isset( $ads[ $row['target'] ] ) ? $ads[ $row['target'] ] : null;
-		$ads[ $row['target'] ]  = array_merge(
+		$by_slot[ $row['target'] ][ md5( trim( $row['code'] ) ) ] = array( trim( $row['code'] ), $row['widget'] );
+		if ( ! empty( $row['positions'] ) ) {
+			$pos[ $row['target'] ] = $row['positions'];
+		}
+	}
+	$copied  = 0;
+	$widgets = array();
+	foreach ( $by_slot as $slot => $codes ) {
+		if ( $only_empty && ! empty( $ads[ $slot ]['enabled'] ) ) {
+			continue;
+		}
+		$prev[ $slot ] = isset( $ads[ $slot ] ) ? $ads[ $slot ] : null;
+		$html          = array();
+		$names         = array();
+		foreach ( $codes as $c ) {
+			$html[]  = $c[0];
+			$names[] = $c[1];
+		}
+		$ads[ $slot ] = array_merge(
 			pulse_ad_defaults(),
 			array(
-				'enabled'  => 1,
-				'type'     => 'script',
-				'html'     => $row['code'],
-				'campaign' => sprintf( 'Copied from Foxiz %s', $row['widget'] ),
+				'enabled'    => 1,
+				'type'       => 'script',
+				'html'       => implode( "\n", $html ),
+				'campaign'   => 'Copied from Foxiz: ' . implode( ', ', $names ),
+				'after_para' => isset( $pos[ $slot ] ) && '' !== trim( $pos[ $slot ] ) ? $pos[ $slot ] : '3',
 			)
 		);
-		++$copied;
+		$widgets = array_merge( $widgets, $names );
+		$copied += count( $codes );
 	}
 	update_option( PULSE_ADS, $ads );
-	return pulse_log_add( 'foxiz_ads', sprintf( /* translators: %d: count */ __( 'Copied %d Foxiz ad widgets into Pulse placements (originals untouched)', 'allbiohub-pulse' ), $copied ), array( 'previous' => $prev ) );
+
+	// Take copied Foxiz widgets out of Pulse areas (Foxiz's own layout is kept).
+	$sw       = wp_get_sidebars_widgets();
+	$prev_sw  = $sw;
+	$moved    = false;
+	foreach ( $sw as $sidebar => $list ) {
+		if ( 0 === strpos( $sidebar, 'pulse-' ) && is_array( $list ) && array_intersect( $list, $widgets ) ) {
+			$sw[ $sidebar ] = array_values( array_diff( $list, $widgets ) );
+			$moved          = true;
+		}
+	}
+	if ( $moved ) {
+		wp_set_sidebars_widgets( $sw );
+	}
+	return pulse_log_add(
+		'foxiz_ads',
+		sprintf( /* translators: 1: ads, 2: placements */ __( 'Copied %1$d Foxiz ads into %2$d Pulse placements (Foxiz settings untouched)', 'allbiohub-pulse' ), $copied, count( $prev ) ),
+		array( 'previous' => $prev, 'sidebars' => $moved ? $prev_sw : null )
+	);
 }
 
 function pulse_step_categories() {
@@ -534,7 +708,7 @@ function pulse_report_rows() {
 	}
 	foreach ( isset( $r['foxiz_ads'] ) ? $r['foxiz_ads'] : array() as $ad ) {
 		if ( ! $ad['target'] ) {
-			$rows[] = array( 'Needs manual review', 'Ads', $ad['widget'], 'Foxiz ad widget in ' . $ad['sidebar'] . ' has no direct Pulse placement' );
+			$rows[] = array( 'Needs manual review', 'Ads', $ad['widget'], 'Foxiz ad in ' . $ad['sidebar'] . ' has no direct Pulse placement' );
 		}
 	}
 	foreach ( isset( $r['videos']['review'] ) ? $r['videos']['review'] : array() as $id ) {
@@ -636,13 +810,13 @@ function pulse_migration_screen() {
 					<?php $form( 'menus', __( 'Apply', 'allbiohub-pulse' ), true, $backup ); ?>
 				</li>
 				<li>
-					<h3><?php esc_html_e( 'Copy Foxiz ad code into Pulse placements', 'allbiohub-pulse' ); ?> <?php echo in_array( 'foxiz_ads', $steps, true ) ? '<span class="pulse-check is-ok">✓</span>' : ''; ?></h3>
+					<h3><?php esc_html_e( 'Import all Foxiz ads into Pulse placements', 'allbiohub-pulse' ); ?> <?php echo in_array( 'foxiz_ads', $steps, true ) ? '<span class="pulse-check is-ok">✓</span>' : ''; ?></h3>
 					<ul class="pulse-list">
 						<?php foreach ( $r['foxiz_ads'] as $ad ) : ?>
 							<li><code><?php echo esc_html( $ad['widget'] ); ?></code> <?php esc_html_e( 'in', 'allbiohub-pulse' ); ?> <code><?php echo esc_html( $ad['sidebar'] ); ?></code> → <?php echo $ad['target'] ? esc_html( pulse_ad_slots()[ $ad['target'] ][0] ) : '<em>' . esc_html__( 'needs review', 'allbiohub-pulse' ) . '</em>'; ?><?php echo '' === $ad['code'] ? ' <em>(' . esc_html__( 'no code found', 'allbiohub-pulse' ) . ')</em>' : ''; ?></li>
 						<?php endforeach; ?>
 					</ul>
-					<p class="description"><?php esc_html_e( 'Affects: ads shown by Pulse. The Foxiz widgets stay where they are. Ad Inserter is not changed.', 'allbiohub-pulse' ); ?></p>
+					<p class="description"><?php esc_html_e( 'Affects: ads shown by Pulse. Several ads for one placement are stacked. Foxiz ad widgets that WordPress moved into Pulse widget areas are taken out of them so they don\'t show twice. Foxiz\'s own settings and Ad Inserter are not changed. Undo restores everything.', 'allbiohub-pulse' ); ?></p>
 					<?php $form( 'foxiz_ads', __( 'Apply', 'allbiohub-pulse' ), true, $backup ); ?>
 				</li>
 				<li>

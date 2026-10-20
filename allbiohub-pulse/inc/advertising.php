@@ -32,6 +32,7 @@ function pulse_ad_slots() {
 		'article_bottom'     => array( __( 'Article Bottom', 'allbiohub-pulse' ), 'article', __( 'After the article, before related stories.', 'allbiohub-pulse' ) ),
 		'footer'             => array( __( 'Footer Advertisement', 'allbiohub-pulse' ), 'footer', __( 'Above the footer on every page.', 'allbiohub-pulse' ) ),
 		'custom'             => array( __( 'Custom Advertisement', 'allbiohub-pulse' ), 'custom', __( 'Place anywhere with [allbiohub_ad slot="custom"].', 'allbiohub-pulse' ) ),
+		'head'               => array( __( 'Site-wide Ad Code (head)', 'allbiohub-pulse' ), 'site', __( 'Code that loads in the page head on every page, such as AdSense Auto ads. Nothing is shown in a box.', 'allbiohub-pulse' ) ),
 	);
 }
 
@@ -506,3 +507,14 @@ function pulse_ad_inventory_screen() {
 	</div>
 	<?php
 }
+
+/**
+ * Site-wide head code (e.g. Auto ads), printed raw in <head>.
+ */
+add_action( 'wp_head', 'pulse_head_ad_code', 20 );
+function pulse_head_ad_code() {
+	if ( pulse_ad_is_active( 'head' ) && in_array( pulse_ad( 'head' )['type'], array( 'html', 'script' ), true ) ) {
+		echo pulse_ad( 'head' )['html'] . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput -- saved by unfiltered_html users only.
+	}
+}
+

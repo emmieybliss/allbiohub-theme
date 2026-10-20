@@ -108,11 +108,14 @@ Every post field Pulse reads, in order of preference:
 
 | Where | What | → Pulse placement | What happens |
 |---|---|---|---|
-| `foxiz_header_ad` | Foxiz ad widget `widget-ad-script-15` | Top Site Advertisement | The code is **copied** into Pulse after approval. The widget stays |
-| `foxiz_entry_top` | `widget-ad-script-12` | Article Top | Copied, after approval |
-| `foxiz_entry_bottom` | `widget-ad-script-7` | Article Bottom | Copied, after approval |
-| `foxiz_sidebar_default` | `widget-ad-script-9` and a Ruby template widget | Sidebar | Ad copied. The template widget is listed for review |
-| `foxiz_ms_blog`, `foxiz_ms_sb2`, `foxiz_sidebar_more` | `-14`, `-10`, `-11` | Listed for review (no direct Pulse equivalent) | Not copied automatically |
+| `foxiz_header_ad` | Foxiz ad widget `widget-ad-script-15` | Top Site Advertisement | Copied automatically (update 2026-10-20, owner request) |
+| `foxiz_entry_top` | `widget-ad-script-12` | Article Top | Copied automatically |
+| `foxiz_entry_bottom` | `widget-ad-script-7` | Article Bottom | Copied automatically |
+| `foxiz_sidebar_default`, `foxiz_ms_sb2`, `foxiz_ms_blog` | `-9`, `-10`, `-14` (+ a Ruby template widget) | Sidebar | Copied automatically and stacked (identical codes once). The template widget is listed for review |
+| `foxiz_sidebar_more` | `-11` | Footer Advertisement | Copied automatically |
+| Foxiz Theme Options ads (`ad_top_*`, `ad_single_*`, auto ads) | Top site ad, in-article ads with their paragraph positions, Auto ads code | Top Site / Inline Article (same positions) / Site-wide head code | Copied automatically when present |
+
+**Automatic import (v1.4.0):** the first time an admin opens the dashboard after updating, Pulse copies every Foxiz ad into Pulse placements that are still empty, reading Foxiz's saved widget layout. Foxiz ad widgets that WordPress moved into Pulse widget areas on the theme switch are taken out of those areas so nothing shows twice. Logged under Migration & Health with Undo; the same page has an **Import all Foxiz ads** button to re-run it (that one overwrites).
 | Ad Inserter plugin | Inserts ads into content | Not changed | Keeps working, because it hooks into the content |
 | Ads.txt Manager | `ads.txt`, `app-ads.txt` | Not changed | |
 | `_advads_ad_settings` (572 posts) | Left over from Advanced Ads, which is not installed | Ignored | |
@@ -167,7 +170,7 @@ These items are listed in Migration & Health. Pulse will not guess on any of the
 4. **Editorial Submission (1 post):** decide which section it belongs to.
 5. ✅ **Social Menu:** approved to use as is. Pulse shows the links from the existing Social Menu even before menus are assigned (Facebook, YouTube, Twitter/X, Instagram, LinkedIn). Google Plus is skipped because the service is closed. Update 2026-10-20: Theme Settings → Social Profiles now starts filled with all nine profiles listed on the live site (Facebook, X @allbiohubmedia, YouTube, Instagram, LinkedIn, Pinterest, Telegram, Medium, Flipboard), so the Social Menu is only a fallback.
 6. ✅ **Advertise With Us:** the owner chose `mediakitad.netlify.app`. A new setting (Theme Settings → General → Advertise link) defaults to it. Menu links to `/advertise-with-us/` open the media kit instead; the menus themselves and the page are not edited. Clear the setting to go back to the page.
-7. **Foxiz ad widgets with no direct Pulse equivalent:** `-14`, `-10` and `-11`, plus the Ruby template widget in the default sidebar.
+7. ✅ **Foxiz ad widgets:** all imported automatically (v1.4.0). Only the Ruby template widget in the default sidebar is left for review.
 8. **Leftover shortcode `[calculate_years]` in 2 posts.** Pulse registers it so that it outputs an age instead of raw brackets. Its exact original behaviour is inferred and should be checked on those 2 posts.
 9. **25 empty tags and near-duplicate tags.** These are listed only.
 10. **25 Elementor posts.** They render through Elementor. Check them once after the theme switch.
