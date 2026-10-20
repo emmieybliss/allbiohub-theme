@@ -824,7 +824,13 @@ html.pulse-locked { overflow: hidden; }
 .pulse-pinned .pulse-story--card .pulse-story__title { font-size: 1.3125rem; }
 
 /* ---------- Ads and sponsored ---------- */
-.pulse-ad { position: relative; display: block; }
+.pulse-ad { position: relative; display: block; max-width: 100%; overflow: hidden; }
+.pulse-ad img { max-width: 100%; height: auto; }
+/* Ad network code: units stack centred; wider ones are scaled down by site.js. */
+.pulse-ad__fit { display: flex; flex-direction: column; align-items: center; gap: 8px; max-width: 100%; }
+.pulse-ad__fit > :not(iframe):not(ins):not(embed):not(object) { max-width: 100%; }
+.pulse-ad__fit iframe, .pulse-ad__fit ins, .pulse-ad__fit embed, .pulse-ad__fit object { max-width: none; }
+.pulse-ad__fit [data-pulse-scaled] { max-width: none; transform-origin: top left; }
 .pulse-ad__label {
 	display: block;
 	margin-bottom: 6px;
@@ -1208,7 +1214,7 @@ html.pulse-locked { overflow: hidden; }
 .pulse-prose table { width: 100%; border-collapse: collapse; font-size: .9375rem; display: block; overflow-x: auto; }
 .pulse-prose th, .pulse-prose td { padding: 10px 12px; border-bottom: 1px solid var(--pulse-rule); text-align: left; vertical-align: top; }
 .pulse-prose th { font-weight: 700; background: var(--pulse-sunk); }
-.pulse-prose iframe { width: 100%; border: 0; }
+.pulse-prose iframe:not(.pulse-ad__fit iframe) { width: 100%; border: 0; }
 .pulse-prose .wp-block-embed__wrapper, .pulse-prose .wp-embed-aspect-16-9 .wp-block-embed__wrapper { position: relative; }
 .pulse-prose iframe[src*="youtube"], .pulse-prose iframe[src*="vimeo"] { aspect-ratio: 16 / 9; height: auto; }
 .pulse-prose code { padding: .1em .35em; border-radius: 3px; background: var(--pulse-sunk); font-size: .9em; }
@@ -1413,6 +1419,8 @@ html.pulse-locked { overflow: hidden; }
 /* Taps register immediately (no double-tap zoom wait) and show feedback. */
 a, button, input, select, textarea, label, summary { touch-action: manipulation; }
 html { -webkit-tap-highlight-color: transparent; }
+/* Safety net: nothing (an ad, an embed) can make the page scroll sideways. */
+html, body { overflow-x: clip; }
 .pulse-iconbtn:active, .pulse-chip:active, .pulse-search__cancel:active { transform: scale(.94); }
 /* The browser skips laying out homepage sections until they scroll near the
    screen, so the first view paints sooner on phones. */

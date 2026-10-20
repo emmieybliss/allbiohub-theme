@@ -171,6 +171,11 @@ function pulse_render_ad( $slot, $variant = 'banner' ) {
 	if ( '' === trim( (string) $inner ) ) {
 		return '';
 	}
+	// Network code (fixed-size banners, iframes) is scaled to fit the screen
+	// by site.js, so a 728 or 970 wide unit never widens a phone page.
+	if ( in_array( $ad['type'], array( 'html', 'script', 'shortcode' ), true ) ) {
+		$inner = '<div class="pulse-ad__fit" data-pulse-fit>' . $inner . '</div>';
+	}
 	$pixel = $ad['tracking'] ? sprintf( '<img class="pulse-ad__pixel" src="%s" width="1" height="1" alt="" aria-hidden="true" loading="lazy">', esc_url( $ad['tracking'] ) ) : '';
 	return sprintf(
 		'<aside class="pulse-ad pulse-ad--%1$s pulse-ad--slot-%2$s"%3$s aria-label="%4$s"><span class="pulse-ad__label">%5$s</span>%6$s%7$s</aside>',

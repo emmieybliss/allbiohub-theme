@@ -171,6 +171,54 @@
 		});
 	});
 
+	/* ---------- Responsive ads: shrink fixed-size units to fit ---------- */
+	function fitAd(box) {
+		var avail = box.clientWidth;
+		if (!avail) { return; }
+		// Undo earlier scaling so sizes are measured fresh.
+		$$('[data-pulse-scaled]', box).forEach(function (el) {
+			el.removeAttribute('data-pulse-scaled');
+			el.style.transform = el.style.marginRight = el.style.marginBottom = '';
+		});
+		(function walk(parent) {
+			Array.prototype.forEach.call(parent.children, function (el) {
+				if (/^(SCRIPT|STYLE|NOSCRIPT)$/.test(el.tagName)) { return; }
+				var w = el.offsetWidth, h = el.offsetHeight;
+				if (w > avail + 1) {
+					var r = avail / w;
+					el.setAttribute('data-pulse-scaled', '');
+					el.style.transform = 'scale(' + r + ')';
+					el.style.marginRight = (-(w * (1 - r))) + 'px';
+					el.style.marginBottom = (-(h * (1 - r))) + 'px';
+				} else {
+					walk(el);
+				}
+			});
+		})(box);
+	}
+	var fits = $$('[data-pulse-fit]');
+	if (fits.length) {
+		var pending = false;
+		var mo = window.MutationObserver ? new MutationObserver(function () { refit(); }) : null;
+		var watch = function () {
+			fits.forEach(function (f) { mo.observe(f, { childList: true, subtree: true, attributes: true, attributeFilter: ['width', 'height', 'style'] }); });
+		};
+		var refit = function () {
+			if (pending) { return; }
+			pending = true;
+			window.requestAnimationFrame(function () {
+				pending = false;
+				// Our own style changes must not re-trigger the observer.
+				if (mo) { mo.disconnect(); }
+				fits.forEach(fitAd);
+				if (mo) { watch(); }
+			});
+		};
+		refit();
+		window.addEventListener('load', refit);
+		window.addEventListener('resize', refit);
+	}
+
 	/* ---------- Copy link ---------- */
 	$$('[data-pulse-copy]').forEach(function (btn) {
 		btn.addEventListener('click', function () {
