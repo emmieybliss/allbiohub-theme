@@ -4,7 +4,7 @@ A custom WordPress theme for [AllBioHub](https://allbiohub.com), an African digi
 
 ## Status
 
-Phase 1 (audit) and the plan are in progress. See **[docs/PLAN.md](docs/PLAN.md)** for the audit status, migration map, architecture, design system and build phases.
+Phase 1 audit is done and Phase 2 (migration map) is drafted from the real site data. See **[docs/PLAN.md](docs/PLAN.md)** for the audit status, migration map, architecture, design system and build phases.
 
 ## Repository layout
 
