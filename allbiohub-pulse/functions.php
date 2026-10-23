@@ -7,7 +7,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'PULSE_VERSION', '1.4.1' );
+define( 'PULSE_VERSION', '1.4.2' );
 define( 'PULSE_DIR', get_template_directory() );
 define( 'PULSE_URI', get_template_directory_uri() );
 
@@ -31,6 +31,7 @@ $pulse_modules = array(
 	'theme-options',
 	'brand',
 	'migration',
+	'cache',
 );
 
 foreach ( $pulse_modules as $pulse_module ) {

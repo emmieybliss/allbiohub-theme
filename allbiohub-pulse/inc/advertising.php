@@ -174,7 +174,7 @@ function pulse_render_ad( $slot, $variant = 'banner' ) {
 	// Network code (fixed-size banners, iframes) is scaled to fit the screen
 	// by site.js, so a 728 or 970 wide unit never widens a phone page.
 	if ( in_array( $ad['type'], array( 'html', 'script', 'shortcode' ), true ) ) {
-		$inner = '<div class="pulse-ad__fit" data-pulse-fit>' . $inner . '</div>';
+		$inner = '<div class="pulse-ad__fit" data-pulse-fit>' . pulse_protect_ad_scripts( $inner ) . '</div>';
 	}
 	$pixel = $ad['tracking'] ? sprintf( '<img class="pulse-ad__pixel" src="%s" width="1" height="1" alt="" aria-hidden="true" loading="lazy">', esc_url( $ad['tracking'] ) ) : '';
 	return sprintf(
@@ -519,7 +519,7 @@ function pulse_ad_inventory_screen() {
 add_action( 'wp_head', 'pulse_head_ad_code', 20 );
 function pulse_head_ad_code() {
 	if ( pulse_ad_is_active( 'head' ) && in_array( pulse_ad( 'head' )['type'], array( 'html', 'script' ), true ) ) {
-		echo pulse_ad( 'head' )['html'] . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput -- saved by unfiltered_html users only.
+		echo pulse_protect_ad_scripts( pulse_ad( 'head' )['html'] ) . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput -- saved by unfiltered_html users only.
 	}
 }
 
