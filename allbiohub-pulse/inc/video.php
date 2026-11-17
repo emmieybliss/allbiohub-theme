@@ -526,7 +526,7 @@ function pulse_video_player( $post = null, $args = array() ) {
 	if ( 'self' === $data['provider'] ) {
 		$poster = wp_get_attachment_image_url( pulse_image_id( $post ), $args['size'] );
 		return sprintf(
-			'<div class="pulse-video pulse-video--native"><video controls playsinline preload="metadata"%s><source src="%s"%s></video></div>',
+			'<div class="pulse-video pulse-video--native"><video controls playsinline preload="none"%s><source src="%s"%s></video></div>',
 			$poster ? ' poster="' . esc_url( $poster ) . '"' : '',
 			esc_url( $data['file_url'] ),
 			$data['mime'] ? ' type="' . esc_attr( $data['mime'] ) . '"' : ''

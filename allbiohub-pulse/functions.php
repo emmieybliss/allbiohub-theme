@@ -7,7 +7,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'PULSE_VERSION', '1.4.3' );
+define( 'PULSE_VERSION', '1.4.4' );
 define( 'PULSE_DIR', get_template_directory() );
 define( 'PULSE_URI', get_template_directory_uri() );
 

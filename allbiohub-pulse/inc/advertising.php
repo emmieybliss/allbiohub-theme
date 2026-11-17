@@ -174,7 +174,7 @@ function pulse_render_ad( $slot, $variant = 'banner' ) {
 	// Network code (fixed-size banners, iframes) is scaled to fit the screen
 	// by site.js, so a 728 or 970 wide unit never widens a phone page.
 	if ( in_array( $ad['type'], array( 'html', 'script', 'shortcode' ), true ) ) {
-		$inner = '<div class="pulse-ad__fit" data-pulse-fit>' . pulse_protect_ad_scripts( $inner ) . '</div>';
+		$inner = '<div class="pulse-ad__fit" data-pulse-fit>' . pulse_protect_ad_scripts( pulse_ad_link_rel( $inner ) ) . '</div>';
 	}
 	$pixel = $ad['tracking'] ? sprintf( '<img class="pulse-ad__pixel" src="%s" width="1" height="1" alt="" aria-hidden="true" loading="lazy">', esc_url( $ad['tracking'] ) ) : '';
 	return sprintf(
@@ -187,6 +187,33 @@ function pulse_render_ad( $slot, $variant = 'banner' ) {
 		$inner, // phpcs:ignore WordPress.Security.EscapeOutput -- escaped per type above.
 		$pixel
 	);
+}
+
+/**
+ * Mark every link in pasted ad code as sponsored (search engines expect this
+ * on paid links), keeping any rel values the code already has. Links written
+ * by an ad's own script are left alone so the script is never changed.
+ */
+function pulse_ad_link_rel( $html ) {
+	$parts = preg_split( '#(<script\b.*?</script>)#is', (string) $html, -1, PREG_SPLIT_DELIM_CAPTURE );
+	foreach ( $parts as $i => $part ) {
+		if ( 1 === $i % 2 ) {
+			continue;
+		}
+		$parts[ $i ] = preg_replace_callback(
+			'#<a\b[^>]*>#i',
+			function ( $m ) {
+				$tag = $m[0];
+				$re  = '#\srel\s*=\s*(?:"([^"]*)"|\'([^\']*)\'|([^\s>]+))#i';
+				$old = preg_match( $re, $tag, $r ) ? trim( $r[1] . ( $r[2] ?? '' ) . ( $r[3] ?? '' ) ) : '';
+				$rel = array_unique( array_merge( preg_split( '#\s+#', strtolower( $old ), -1, PREG_SPLIT_NO_EMPTY ), array( 'sponsored', 'noopener' ) ) );
+				$new = ' rel="' . esc_attr( implode( ' ', $rel ) ) . '"';
+				return $old || preg_match( $re, $tag ) ? preg_replace( $re, $new, $tag, 1 ) : preg_replace( '#^<a\b#i', '<a' . $new, $tag );
+			},
+			$part
+		);
+	}
+	return implode( '', $parts );
 }
 
 function pulse_the_ad( $slot, $variant = 'banner' ) {
