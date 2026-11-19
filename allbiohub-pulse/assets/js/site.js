@@ -280,4 +280,23 @@
 		}, { threshold: 0.5 });
 		ads.forEach(function (a) { seen.observe(a); });
 	}
+
+	/* ---------- Featured Startups: a different mix on each visit ---------- */
+	$$('[data-pulse-rotate]').forEach(function (list) {
+		var show = parseInt(list.getAttribute('data-pulse-rotate'), 10) || 6;
+		var items = $$(':scope > li', list);
+		function shuffle(a) {
+			for (var i = a.length - 1; i > 0; i--) {
+				var j = Math.floor(Math.random() * (i + 1));
+				var t = a[i]; a[i] = a[j]; a[j] = t;
+			}
+			return a;
+		}
+		var paid = shuffle(items.filter(function (li) { return li.hasAttribute('data-fixed'); }));
+		var rest = shuffle(items.filter(function (li) { return !li.hasAttribute('data-fixed'); }));
+		paid.concat(rest).forEach(function (li, i) {
+			li.hidden = i >= show;
+			list.appendChild(li);
+		});
+	});
 }());

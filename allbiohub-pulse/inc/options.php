@@ -40,11 +40,12 @@ function pulse_schema() {
 		'color_scheme_default'  => array( 'select:system|light|dark', 'system' ),
 
 		// Homepage: order + toggles.
-		'home_order'            => array( 'slugs', 'hero,pinned,sponsored,biography,video,categories,sponsored_banner,newsletter' ),
+		'home_order'            => array( 'slugs', 'hero,pinned,sponsored,biography,startups,video,categories,sponsored_banner,newsletter' ),
 		'home_hero'             => array( 'bool', 1 ),
 		'home_pinned'           => array( 'bool', 1 ),
 		'home_sponsored'        => array( 'bool', 1 ),
 		'home_biography'        => array( 'bool', 1 ),
+		'home_startups'         => array( 'bool', 1 ),
 		'home_video'            => array( 'bool', 1 ),
 		'home_categories'       => array( 'bool', 1 ),
 		'home_sponsored_banner' => array( 'bool', 1 ),
@@ -66,6 +67,14 @@ function pulse_schema() {
 		'people_title'          => array( 'text', 'People You Should Know' ),
 		'people_count'          => array( 'int', 6 ),
 		'people_posts'          => array( 'ids', '' ),
+
+		// Featured Startups (Startup Database).
+		'startups_title'        => array( 'text', 'Featured Startups' ),
+		'startups_text'         => array( 'text', 'African startups to watch, from the AllBioHub Startup Database.' ),
+		'startups_count'        => array( 'int', 6 ),
+		'startups_picks'        => array( 'ids', '' ),
+		'startups_fill'         => array( 'bool', 1 ),
+		'startups_rotate'       => array( 'select:visit|daily|off', 'visit' ),
 
 		// Video.
 		'video_title'           => array( 'text', 'AllBioHub Video' ),

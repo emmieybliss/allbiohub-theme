@@ -18,6 +18,7 @@ $pulse_parts = array(
 	'pinned'           => 'home/pinned',
 	'sponsored'        => 'home/sponsored',
 	'biography'        => 'home/biography',
+	'startups'         => 'home/startups',
 	'video'            => 'home/video',
 	'categories'       => 'home/categories',
 	'sponsored_banner' => 'home/sponsored-banner',

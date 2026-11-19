@@ -62,6 +62,7 @@ function pulse_settings_tabs() {
 				'home_pinned'           => array( __( 'Pinned Stories', 'allbiohub-pulse' ), __( 'Choose the stories under AllBioHub → Pinned Stories.', 'allbiohub-pulse' ) ),
 				'home_sponsored'        => array( __( 'Sponsored / Featured Content', 'allbiohub-pulse' ), __( 'Filled from the Sponsored Content and Sponsored Story placements.', 'allbiohub-pulse' ) ),
 				'home_biography'        => array( __( 'Featured Biography + People You Should Know', 'allbiohub-pulse' ), '' ),
+				'home_startups'         => array( __( 'Featured Startups', 'allbiohub-pulse' ), __( 'Startups from the Startup Database. Choose them on the Featured Startups tab.', 'allbiohub-pulse' ) ),
 				'home_video'            => array( __( 'AllBioHub Video', 'allbiohub-pulse' ), '' ),
 				'home_categories'       => array( __( 'Category sections', 'allbiohub-pulse' ), '' ),
 				'home_sponsored_banner' => array( __( 'Sponsored banner', 'allbiohub-pulse' ), '' ),
@@ -92,6 +93,17 @@ function pulse_settings_tabs() {
 				'people_title' => array( __( 'Section title', 'allbiohub-pulse' ), '' ),
 				'people_count' => array( __( 'Number of people', 'allbiohub-pulse' ), __( 'Between 3 and 12. Desktop shows up to 6 at once; the rest scroll.', 'allbiohub-pulse' ) ),
 				'people_posts' => array( __( 'Hand-picked people (optional)', 'allbiohub-pulse' ), __( 'Choose biography posts. Empty slots fill automatically from the newest biographies.', 'allbiohub-pulse' ), 'picker:12' ),
+			),
+		),
+		'startups'    => array(
+			'label'  => __( 'Featured Startups', 'allbiohub-pulse' ),
+			'fields' => array(
+				'startups_title'  => array( __( 'Section title', 'allbiohub-pulse' ), '' ),
+				'startups_text'   => array( __( 'Short line under the title', 'allbiohub-pulse' ), __( 'Leave empty to hide it.', 'allbiohub-pulse' ) ),
+				'startups_count'  => array( __( 'How many to show', 'allbiohub-pulse' ), __( 'Between 4 and 8. Computers show 4 in a row, phones show 2.', 'allbiohub-pulse' ) ),
+				'startups_picks'  => array( __( 'Your picks', 'allbiohub-pulse' ), __( 'Search and add startups. Startups with a paid or approved Featured placement in the Startup Database are always shown first, before your picks.', 'allbiohub-pulse' ), 'picker:24:abh_startup' ),
+				'startups_fill'   => array( __( 'Fill empty spots automatically', 'allbiohub-pulse' ), __( 'Uses the newest startups that have a logo when there are not enough featured startups and picks.', 'allbiohub-pulse' ) ),
+				'startups_rotate' => array( __( 'Rotation', 'allbiohub-pulse' ), __( 'Every visit: each visitor sees a different mix. Once a day: the mix changes daily. Off: always the first ones in your list.', 'allbiohub-pulse' ) ),
 			),
 		),
 		'video'       => array(
@@ -192,7 +204,7 @@ function pulse_admin_header( $title, $intro = '' ) {
  */
 function pulse_admin_picker( $name, array $ids, $max = 5, $post_type = 'post', $numbered = false ) {
 	?>
-	<div class="pulse-picker" data-max="<?php echo esc_attr( $max ); ?>" data-type="<?php echo esc_attr( $post_type ); ?>" <?php echo $numbered ? 'data-numbered' : ''; ?>>
+	<div class="pulse-picker" data-max="<?php echo esc_attr( $max ); ?>" data-type="<?php echo esc_attr( $post_type ); ?>" <?php echo $numbered ? 'data-numbered' : ''; ?> <?php echo 'abh_startup' === $post_type ? 'data-search-url="' . esc_url( rest_url( 'allbiohub/v1/pick-startups' ) ) . '"' : ''; ?>>
 		<input type="hidden" name="<?php echo esc_attr( $name ); ?>" value="<?php echo esc_attr( implode( ',', $ids ) ); ?>" data-picker-value>
 		<ol class="pulse-picker__list" data-picker-list>
 			<?php foreach ( $ids as $id ) : ?>
@@ -211,7 +223,8 @@ function pulse_admin_picker( $name, array $ids, $max = 5, $post_type = 'post', $
 			<?php endforeach; ?>
 		</ol>
 		<div class="pulse-picker__search">
-			<input type="search" placeholder="<?php esc_attr_e( 'Search stories to add…', 'allbiohub-pulse' ); ?>" data-picker-search aria-label="<?php esc_attr_e( 'Search stories to add', 'allbiohub-pulse' ); ?>">
+			<?php $pulse_ph = 'abh_startup' === $post_type ? __( 'Search startups to add…', 'allbiohub-pulse' ) : __( 'Search stories to add…', 'allbiohub-pulse' ); ?>
+			<input type="search" placeholder="<?php echo esc_attr( $pulse_ph ); ?>" data-picker-search aria-label="<?php echo esc_attr( $pulse_ph ); ?>">
 			<ul class="pulse-picker__results" data-picker-results></ul>
 		</div>
 	</div>
@@ -237,13 +250,15 @@ function pulse_render_field( $key, $def ) {
 	echo '</div><div class="pulse-row__control">';
 
 	if ( 0 === strpos( $control, 'picker:' ) ) {
-		pulse_admin_picker( $name, pulse_opt_ids( $key ) ? pulse_opt_ids( $key ) : ( 'int' === $type && $value ? array( (int) $value ) : array() ), (int) substr( $control, 7 ) );
+		$pick = explode( ':', $control );
+		pulse_admin_picker( $name, pulse_opt_ids( $key ) ? pulse_opt_ids( $key ) : ( 'int' === $type && $value ? array( (int) $value ) : array() ), (int) $pick[1], isset( $pick[2] ) ? $pick[2] : 'post' );
 	} elseif ( 0 === strpos( $control, 'order' ) ) {
 		$items = 'order' === $control ? array(
 			'hero'             => __( 'Hero + Trending Stories', 'allbiohub-pulse' ),
 			'pinned'           => __( 'Pinned Stories', 'allbiohub-pulse' ),
 			'sponsored'        => __( 'Sponsored Content', 'allbiohub-pulse' ),
 			'biography'        => __( 'Featured Biography + People', 'allbiohub-pulse' ),
+			'startups'         => __( 'Featured Startups', 'allbiohub-pulse' ),
 			'video'            => __( 'AllBioHub Video', 'allbiohub-pulse' ),
 			'categories'       => __( 'Category sections', 'allbiohub-pulse' ),
 			'sponsored_banner' => __( 'Sponsored banner', 'allbiohub-pulse' ),
@@ -277,6 +292,7 @@ function pulse_render_field( $key, $def ) {
 			'system' => __( 'Follow device', 'allbiohub-pulse' ), 'light' => __( 'Light', 'allbiohub-pulse' ), 'dark' => __( 'Dark', 'allbiohub-pulse' ),
 			'week' => __( 'Video of the Week', 'allbiohub-pulse' ), 'month' => __( 'Video of the Month', 'allbiohub-pulse' ), 'featured' => __( 'Featured (priority)', 'allbiohub-pulse' ),
 			'split' => __( 'Split', 'allbiohub-pulse' ), 'stacked' => __( 'Stacked', 'allbiohub-pulse' ),
+			'visit' => __( 'Every visit', 'allbiohub-pulse' ), 'daily' => __( 'Once a day', 'allbiohub-pulse' ), 'off' => __( 'Off', 'allbiohub-pulse' ),
 		);
 		echo '<select id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '">';
 		foreach ( explode( '|', substr( $type, 7 ) ) as $choice ) {

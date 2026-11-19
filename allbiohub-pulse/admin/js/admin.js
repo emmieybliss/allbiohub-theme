@@ -21,13 +21,14 @@
 		var max = parseInt(picker.getAttribute('data-max'), 10) || 5;
 		var type = picker.getAttribute('data-type') || 'post';
 		var timer = null;
+		var placeholder = input.placeholder;
 		var dragged = null;
 
 		function sync() {
 			value.value = $$('li', list).map(function (li) { return li.getAttribute('data-id'); }).join(',');
 			var full = $$('li', list).length >= max;
 			input.disabled = full;
-			input.placeholder = full ? (t.max || 'Maximum reached') : (t.search || 'Search posts…');
+			input.placeholder = full ? (t.max || 'Maximum reached') : (placeholder || t.search || 'Search posts…');
 		}
 
 		function addItem(id, title) {
@@ -62,7 +63,8 @@
 		});
 
 		function search(q) {
-			var url = cfg.rest + 'wp/v2/search?per_page=8&type=post&subtype=' + encodeURIComponent(type) + '&search=' + encodeURIComponent(q) + '&_fields=id,title';
+			var custom = picker.getAttribute('data-search-url');
+			var url = custom ? custom + (custom.indexOf('?') < 0 ? '?' : '&') + 'search=' + encodeURIComponent(q) : cfg.rest + 'wp/v2/search?per_page=8&type=post&subtype=' + encodeURIComponent(type) + '&search=' + encodeURIComponent(q) + '&_fields=id,title';
 			fetch(url, { headers: { 'X-WP-Nonce': cfg.nonce }, credentials: 'same-origin' })
 				.then(function (r) { return r.json(); })
 				.then(function (rows) {
